@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<!--kissy seed for browser -->
+<script src="http://g.tbcdn.cn/kissy/k/1.3.2/seed.js"></script>
+<style>
+canvas {
+    display: block;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+}
+</style>
+</head>
+
+<body>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+    var S = KISSY;
+    if (S.Config.debug) {
+        S.config({
+            packages:[
+                {
+                    name:"cec",
+                    path:'../src/',
+                    charset:"utf-8",
+                    ignorePackageNameInUri:true
+                }
+            ]
+        });
+    }
+
+    S.use('cec/ticker/,cec/sprite/', function (S, Ticker, Sprite) {
+        var stage = new Sprite('canvas').on('render', function (s) { 
+            s.ctx.rect(0, 0, s.width, s.height);
+            s.ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            s.ctx.fill();
+        });
+
+        var rect = new Sprite({
+            width: 100,
+            height: 100,
+            x: 200,
+            y: 200
+        }).on('render', function (s) {
+            s.ctx.beginPath();
+            s.ctx.rect(0, 0, s.width, s.height);
+            s.ctx.fillStyle = '#ff4a00';
+            s.ctx.fillRect(0, 0, s.width, s.height);
+            s.ctx.closePath();
+            s.ctx.restore();
+        });
+        stage.add(rect);
+
+
+        Ticker.singleton.on('tick', function (dt) {
+            //stage.clear();
+            //rect.x += dt*100;
+            //rect.y += dt*80;
+            rect.angle += Math.PI/180;
+            stage.render(dt);
+        }); 
+    });
+</script>
+</body>
+</html>

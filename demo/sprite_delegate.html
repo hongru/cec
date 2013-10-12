@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<!--kissy seed for browser -->
+<script src="http://g.tbcdn.cn/kissy/k/1.3.2/seed.js"></script>
+<style>
+body {-webkit-user-select: none;}
+canvas {
+    display: block;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+    
+}
+</style>
+</head>
+
+<body>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+    var S = KISSY;
+    if (S.Config.debug) {
+        S.config({
+            packages:[
+                {
+                    name:"cec",
+                    path:'../src/',
+                    charset:"utf-8",
+                    ignorePackageNameInUri:true
+                }
+            ]
+        });
+    }
+
+    S.use('cec/ticker/,cec/sprite/', function (S, Ticker, Sprite) {
+        var stage = new Sprite('canvas');
+
+        for (var i = 0; i < 50; i ++) {
+            var rect = new Sprite({
+                x: Math.random() * stage.width,
+                y: Math.random() * stage.height,
+                width: 40,
+                height: 40
+            }).on('render', function (s) {
+                s.ctx.beginPath();
+                s.ctx.rect(0,0,s.width, s.height);
+                s.ctx.fillStyle = s.bgColor || '#aaa';
+                s.ctx.strokeStyle = '#fff';
+                s.ctx.stroke();
+                s.ctx.fill();
+                s.ctx.closePath();
+            });
+            stage.add(rect);
+        }
+
+        stage.delegate('click', function (e) {
+            e.targetSprite.bgColor = 'red';
+        }).delegate('touchstart', function (e) { 
+            e.targetSprite.bgColor = 'red';
+        });
+
+
+        Ticker.singleton.on('tick', function (dt) {
+            stage.clear();
+            stage.render(dt);
+        }); 
+    });
+</script>
+</body>
+</html>

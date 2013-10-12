@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<!--kissy seed for browser -->
+<script src="http://g.tbcdn.cn/kissy/k/1.3.2/seed.js"></script>
+</head>
+
+<body>
+<script>
+    var S = KISSY;
+    if (S.Config.debug) {
+        S.config({
+            packages:[
+                {
+                    name:"cec",
+                    path:'../src/',
+                    charset:"utf-8",
+                    ignorePackageNameInUri:true
+                }
+            ]
+        });
+    }
+
+    S.use('cec/klass', function (S, klass) {
+        //console.log(klass)
+        var Man = klass({
+            age: 0,
+            events: {
+
+            },
+            initialize: function (name) {
+                this.name = name;
+                this.getEvents();
+            },
+            say: function (s) {
+                console.log(s);
+            },
+            getEvents: function () {
+                console.log(JSON.stringify(this.events));
+            }
+        });
+
+        var SuperMan = Man.extend({
+            events: {
+                'a': 'aa'
+            },
+            fly: function () {
+
+            }
+        });
+
+        console.log(new Man('a'), new SuperMan('b'));
+    })
+</script>
+</body>
+</html>
