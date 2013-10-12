@@ -33,6 +33,18 @@ KISSY.add(function (S, Klass) {
                 }
             }
             return this;
+        },
+        mix: function () {
+            var target, source;
+            if (arguments.length == 1) {
+                target = this;
+                source = arguments[0];
+            }
+            for (var k in source) {
+                target[k] = source[k];
+            }
+
+            return target;
         }
     });
     Notifier.singleton = new Notifier();

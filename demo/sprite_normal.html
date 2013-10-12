@@ -33,33 +33,26 @@ canvas {
     }
 
     S.use('cec/ticker/,cec/sprite/', function (S, Ticker, Sprite) {
-        var stage = new Sprite('canvas').on('render', function (s) { 
-            s.ctx.rect(0, 0, s.width, s.height);
-            s.ctx.fillStyle = 'rgba(0,0,0,0.1)';
-            s.ctx.fill();
+        var stage = new Sprite('canvas').on('render:before', function (s) { 
+            s.fillColor = 'rgba(0,0,0,0.1)';
         });
 
         var rect = new Sprite({
-            width: 100,
-            height: 100,
-            x: 200,
-            y: 200
-        }).on('render', function (s) {
-            s.ctx.beginPath();
-            s.ctx.rect(0, 0, s.width, s.height);
-            s.ctx.fillStyle = '#ff4a00';
-            s.ctx.fillRect(0, 0, s.width, s.height);
-            s.ctx.closePath();
-            s.ctx.restore();
+            x: 0,
+            y: 0,
+            points: [
+                [-50,-50], [50, -50], [50, 50], [-50, 50]
+            ]
+        }).on('render:before', function (s) {
+            s.fillColor = '#ff4a00';
+            s.angle += 1;
+            s.x += 1;
+            s.y += 1.5;
         });
         stage.add(rect);
 
 
         Ticker.singleton.on('tick', function (dt) {
-            //stage.clear();
-            //rect.x += dt*100;
-            //rect.y += dt*80;
-            rect.angle += Math.PI/180;
             stage.render(dt);
         }); 
     });

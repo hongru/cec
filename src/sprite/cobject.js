@@ -1,16 +1,19 @@
 KISSY.add(function (S, Notifier) {
     
     var Cobject = Notifier.extend({
-        width: 0,
-        height: 0,
+        points: null,
         x: 0,
         y: 0,
         scaleX: 1,
         scaleY: 1,
         angle: 0,
+        fillColor: null,
+        opacity: 1,
         zIndex: 0,
         visible: true,
-        imgUrl: null,
+        backgroundImage: null,
+        backgroundPosition: null,
+        backgroundSize: null,
 
         initialize: function (options) {
             if (!options) return;
@@ -23,11 +26,18 @@ KISSY.add(function (S, Notifier) {
                 this.ctx = options.getContext('2d');
                 this.width = this.canvas.width;
                 this.height = this.canvas.height;
+                this.points = [[-this.width/2, -this.height/2], [this.width/2, -this.height/2], [this.width/2, this.height/2], [-this.width/2, this.height/2]];
+                this.ctx.translate(this.width/2, this.height/2);
+
                 this.type = 'stage';
+                this.shape = 'rect';
             } else {
+                this.mix(options);
+                /*
                 for (var k in options) {
                     this[k] = options[k];
                 }
+                */
                 this.type = 'sprite';
             }
         }
