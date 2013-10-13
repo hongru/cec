@@ -32,28 +32,36 @@ canvas {
         });
     }
 
-    S.use('cec/ticker/,cec/sprite/sprite', function (S, Ticker, Sprite) {
-        var stage = new Sprite('canvas');
+    S.use('cec/ticker/,cec/sprite/rectsprite', function (S, Ticker, RectSprite) {
+        var stage = new RectSprite('canvas');
 
-        var container = new Sprite({
+        var rect = new RectSprite({
             x: 0,
             y: 0,
             width: 200,
             height: 200,
-            points: [[-100,-100],[100,-100],[100,100],[-100,100]],
-        }).setFillColor('#aaa').appendTo(stage);
+            backgroundImage: 'http://a.tbcdn.cn/s/kissy/logo.png'
+        })
+        .setFillColor('#333')
+        .appendTo(stage)
+        .on('img:ready', function (img) {
+            this.ready = true;
+            this.setDim(img.width, img.height);
+        }).on('render:before', function () {
+            if (this.ready) {
+                this.rotate('+1');
+                this.ss = this.ss || '-0.01';
+                if (/\+/.test(this.ss) && this.scaleX >= 2) this.ss = '-0.01';
+                if (/\-/.test(this.ss) && this.scaleX <= 0.5) {this.ss = '+0.01';}
+                
+                this.setScale(this.ss, this.ss);          
+            }  
+            
+        })
 
-        for (var i = 0; i < 10; i ++) {
-            var rect = new Sprite({
-                x: (100-Math.random()*container.width),
-                y: (100-Math.random()*container.height),
-                points: [[-10,-10],[10,-10],[10,10],[-10,10]]
-            }).setFillColor('#ff4a00').appendTo(container);
-        }
 
         Ticker.singleton.on('tick', function (dt) {
             stage.clear();
-            container.rotate('+1');
             stage.render(dt);
         }); 
     });

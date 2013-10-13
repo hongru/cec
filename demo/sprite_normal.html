@@ -32,7 +32,7 @@ canvas {
         });
     }
 
-    S.use('cec/ticker/,cec/sprite/', function (S, Ticker, Sprite) {
+    S.use('cec/ticker/,cec/sprite/sprite', function (S, Ticker, Sprite) {
         var stage = new Sprite('canvas').on('render:before', function (s) { 
             s.fillColor = 'rgba(0,0,0,0.1)';
         });
