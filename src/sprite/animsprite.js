@@ -15,8 +15,11 @@ KISSY.add(function (S, RectSprite) {
 		_checkImgs: function () {
 			this.supr();
 			if (this.backgroundImageReady && this.animConfig) {
-				
+				this._dealAnimConfig();
 			}
+		},
+		_dealAnimConfig: function () {
+			this.animationLength = this.animConfig.frameNum/this.animConfig.frameRate;
 		}
 	});
 
