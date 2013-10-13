@@ -12,7 +12,7 @@ KISSY.add(function (S, Cobject) {
             this.children = [];
             
             this._imgLength = -1;
-            this._imgsReady = false;
+            this.backgroundImageReady = false;
             this.loadedImgs = [];
 
             this._dealImgs();
@@ -51,7 +51,7 @@ KISSY.add(function (S, Cobject) {
         },
         _checkImgs: function () {
             if (this.loadedImgs.length == this._imgLength) {
-                this._imgsReady = true;
+                this.backgroundImageReady = true;
 
                 if (this._imgLength == 1) {
                     this.backgroundImageElement = this.loadedImgs[0];
@@ -263,17 +263,6 @@ KISSY.add(function (S, Cobject) {
             this.ctx.closePath();
 
             this.fillColor && this.ctx.fill();
-
-            //images
-            if (this.backgroundImageElement) {
-                var iw = this.backgroundImageElement.width,
-                    ih = this.backgroundImageElement.height,
-                    bgPos = this.backgroundPosition || [0, 0];
-                //rect sprite support image
-                if (this.shape == 'rect') {
-                    this.ctx.drawImage(this.backgroundImageElement, 0, 0, iw, ih, bgPos[0]-this.width/2, bgPos[1]-this.height/2, iw, ih);
-                }
-            }
 
         },
         clear: function (x, y, w, h) {

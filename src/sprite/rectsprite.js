@@ -57,6 +57,27 @@ KISSY.add(function (S, Sprite) {
 		},
 		setHeight: function (h, autoRender) {
 			return this.setDim('+0', h, autoRender);
+		},
+		_render: function (dt) {
+			this.supr(dt);
+			this._drawBackgroundImage();
+		},
+		_drawBackgroundImage: function () {
+			//images
+            if (this.backgroundImageElement) {
+                var iw = this.backgroundImageElement.width,
+                    ih = this.backgroundImageElement.height,
+                    sx = 0,
+                    sy = 0,
+                    bgPos = this.backgroundPosition || [0, 0];
+
+                if (bgPos[0] < 0) sx = -bgPos[0];
+                if (bgPos[1] < 0) sy = -bgPos[1];
+                //rect sprite support image
+                if (this.shape == 'rect') {
+                    this.ctx.drawImage(this.backgroundImageElement, sx, sy, iw-sx, ih-sy, bgPos[0]-this.width/2, bgPos[1]-this.height/2, iw, ih);
+                }
+            }
 		}
 	});
 
