@@ -8,6 +8,8 @@ KISSY.add(function (S, Notifier) {
         scaleY: 1,
         angle: 0,
         fillColor: null,
+        borderWidth: 0,
+        borderColor: null,
         opacity: 1,
         zIndex: 0,
         visible: true,
@@ -26,6 +28,7 @@ KISSY.add(function (S, Notifier) {
                 this.ctx = options.getContext('2d');
                 this.width = this.canvas.width;
                 this.height = this.canvas.height;
+                //this.points = [[0,0], [this.width, 0], [this.width, this.height], [0, this.height]];
                 this.points = [[-this.width/2, -this.height/2], [this.width/2, -this.height/2], [this.width/2, this.height/2], [-this.width/2, this.height/2]];
                 this.ctx.translate(this.width/2, this.height/2);
 

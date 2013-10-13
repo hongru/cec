@@ -143,6 +143,7 @@ KISSY.add(function (S, Cobject) {
 
         add: function (o) {
             o.parent = this;
+            o.stage = this.type == 'stage' ? this : this.stage;
             o.canvas = this.canvas;
             o.ctx = this.ctx;
             this.children.push(o);
@@ -152,12 +153,28 @@ KISSY.add(function (S, Cobject) {
 
             return this;
         },
+        appendTo: function (o) {
+            //console.log(o instanceof Sprite);
+            if (o instanceof Sprite) {
+                o.add(this);
+            }
+            return this;
+        },
         remove: function (o) {
-            for (var i = 0; i < this.children.length; i ++) {
-                if (o == this.children[i]) {
-                    o.parent = null;
-                    this.children.splice(i, 1);
-                    return o;
+            var target, parent;
+            if (!o) {
+                target = this;
+                parent = this.parent;
+            } else {
+                target = o;
+                parent = this;
+            }
+            for (var i = 0; i < parent.children.length; i ++) {
+                if (target == parent.children[i]) {
+                    target.parent = null;
+                    target.stage = null;
+                    parent.children.splice(i, 1);
+                    return target;
                 }
             }
 
@@ -200,17 +217,19 @@ KISSY.add(function (S, Cobject) {
             if (!self.visible) {return}
 
             self.ctx.save();
-            self.ctx.translate(self.x, self.y);
+            
+            self.ctx.translate(self.x/2, self.y/2);
             self.fire('render:before', self);
             self._render(dt);
-            self.ctx.restore();
 
             for (var i = 0, len = self.children.length; i < len ; i++) {
                 self.ctx.save();
-                self.ctx.translate(self.children[i].x, self.children[i].y);
+                self.ctx.translate(self.children[i].x/2, self.children[i].y/2);
                 self.children[i].render(dt);
                 self.ctx.restore();
             }
+
+            self.ctx.restore();
             self.fire('render:after', self);
 
             return this;
@@ -230,12 +249,12 @@ KISSY.add(function (S, Cobject) {
             this.ctx.lineTo(p[0][0], p[0][1]);
             this.ctx.closePath();
 
-            this.ctx.fill();
+            this.fillColor && this.ctx.fill();
 
         },
         clear: function (x, y, w, h) {
-            if (x == undefined) x = 0;
-            if (y == undefined) y = 0;
+            if (x == undefined) x = -this.width/2;
+            if (y == undefined) y = -this.height/2;
             if (w == undefined) w = this.width;
             if (h == undefined) h = this.height;
             this.ctx.clearRect(x, y, w, h);
@@ -259,12 +278,60 @@ KISSY.add(function (S, Cobject) {
             return this;
         },
         // set 
-        set: function (param) {
+        set: function (param, autoRender) {
             for (var k in param) {
-                if (param[k].match(/^([\+\-\*\/])\d+$/)) {
-
+                var matchSymbol = (''+param[k]).match(/^([\+\-\*\/])(\d+)$/);
+                if (matchSymbol) {
+                    var symbol = matchSymbol[1],
+                        num = parseFloat(matchSymbol[2]);
+                    switch(symbol) {
+                        case '+':
+                            param[k] = parseFloat(this[k]) + num;
+                            break;
+                        case '-':
+                            param[k] = parseFloat(this[k]) - num;
+                            break;
+                        case '*':
+                            param[k] = parseFloat(this[k]) * num;
+                            break;
+                        case '/':
+                            param[k] = parseFloat(this[k]) / num;
+                            break;
+                    }
                 }
+                this[k] = param[k];
             }
+            if (autoRender && this.stage) {
+                this.stage.clear();
+                this.stage.render();
+            }
+            return this;
+        },
+        //setAngle
+        setAngle: function (angle, autoRender) {
+            return this.set({angle:angle}, autoRender);
+        },
+        //rotate - alias of setAngle
+        rotate: function (angle, autoRender) {
+            return this.setAngle(angle, autoRender);
+        },
+        setFillColor: function (fillColor, autoRender) {
+            return this.set({fillColor: fillColor}, autoRender);
+        },
+        setXY: function (x, y, autoRender) {
+            if (x == undefined) x = '+0';
+            if (y == undefined) y = '+0';
+            return this.set({x:x, y:y}, autoRender);
+        },
+        //alias of setXY
+        moveTo: function (x, y, autoRender) {
+            return this.setXY(x, y, autoRender);
+        },
+        setX: function (x, autoRender) {
+            return this.setXY(x, '+0', autoRender);
+        },
+        setY: function (y, autoRender) {
+            return this.setXY('+0', y, autoRender);
         }
 
     });
