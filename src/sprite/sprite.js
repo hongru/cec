@@ -356,6 +356,9 @@ KISSY.add(function (S, Cobject) {
         },
         setScaleY: function (scaley, autoRender) {
             return this.setScale('+0', scaley, autoRender);
+        },
+        setAlpha: function () {
+            return this;   
         } 
 
     });

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<!--kissy seed for browser -->
+<script src="http://g.tbcdn.cn/kissy/k/1.3.2/seed.js"></script>
+<style>
+canvas {
+    display: block;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+}
+</style>
+</head>
+
+<body>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script>
+    var S = KISSY;
+    if (S.Config.debug) {
+        S.config({
+            packages:[
+                {
+                    name:"cec",
+                    path:'../src/',
+                    charset:"utf-8",
+                    ignorePackageNameInUri:true
+                }
+            ]
+        });
+    }
+
+    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/animsprite', function (S, Ticker, RectSprite, AnimSprite) {
+        var stage = new RectSprite('canvas');
+
+        var anim = new AnimSprite({
+            x: 0,
+            y: 0,
+            width: 300,
+            height: 250,
+            backgroundImage: './images/package/2.png',
+            animConfig: {
+                autoPlay: true,
+                loop: true,
+                frameNum: 4,
+                frameRate: 6,
+                frameData: [
+                    [0, 0, 599.5, 501],
+                    [600.5, 0, 599.5, 501],
+                    [1201, 0, 599.5, 501],
+                    [1801.5, 0, 599.5, 501]
+                ]
+            }
+        })
+        .appendTo(stage);
+
+        function update (dt) {
+            anim.setX('-'+dt*200);
+            if (anim.x < -stage.width/2 - anim.width/2) anim.setX((stage.width+anim.width)/2);
+        }
+
+        Ticker.singleton.on('tick', function (dt) {
+            stage.clear();
+            update(dt);
+            stage.render(dt);
+        }); 
+    });
+</script>
+</body>
+</html>

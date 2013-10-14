@@ -60,9 +60,9 @@ KISSY.add(function (S, Sprite) {
 		},
 		_render: function (dt) {
 			this.supr(dt);
-			this._drawBackgroundImage();
+			this._drawBackgroundImage(dt);
 		},
-		_drawBackgroundImage: function () {
+		_drawBackgroundImage: function (dt) {
 			//images
             if (this.backgroundImageElement) {
                 var iw = this.backgroundImageElement.width,
