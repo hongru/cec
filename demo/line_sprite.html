@@ -32,20 +32,18 @@ canvas {
         });
     }
 
-    S.use('cec/ticker/,cec/sprite/rectsprite', function (S, Ticker, RectSprite) {
+    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/linesprite', function (S, Ticker, RectSprite, LineSprite) {
         var stage = new RectSprite('canvas');
 
-        var line = new RectSprite({
-            width: 100,
-            height: 100,
-            //fillColor: '#ccc',
-            borderWidth: 1,
-            borderColor: '#333'
+        var line = new LineSprite({
+            points: [[-50, 0], [50, 10]],
+            lineWidth: 1,
+            lineColor: 'red'
         }).appendTo(stage);
 
 
         Ticker.singleton.on('tick', function (dt) {
-            //stage.clear();
+            stage.clear();
             stage.render(dt);
         }); 
     });
