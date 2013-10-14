@@ -265,6 +265,14 @@ KISSY.add(function (S, Cobject) {
             this.ctx.globalAlpha = this.opacity;
             this.fillColor && this.ctx.fill();
 
+            if (this.borderWidth && this.borderWidth > 0) {
+                this.ctx.lineWidth = parseFloat(this.borderWidth);
+                this.ctx.strokeStyle = this.borderColor;
+                //fix lineWidth=1
+
+                this.ctx.stroke();
+            }
+
         },
         clear: function (x, y, w, h) {
             if (x == undefined) x = -this.width/2;
