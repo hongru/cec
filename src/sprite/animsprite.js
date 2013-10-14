@@ -88,6 +88,9 @@ KISSY.add(function (S, RectSprite) {
 		},
 		getFrameNum: function () {
 			return this._frameNum;
+		},
+		getAnimationLength: function () {
+			return this.animationLength;
 		}
 	});
 

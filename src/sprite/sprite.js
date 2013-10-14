@@ -262,6 +262,7 @@ KISSY.add(function (S, Cobject) {
             this.ctx.lineTo(p[0][0], p[0][1]);
             this.ctx.closePath();
 
+            this.ctx.globalAlpha = this.opacity;
             this.fillColor && this.ctx.fill();
 
         },
@@ -357,8 +358,10 @@ KISSY.add(function (S, Cobject) {
         setScaleY: function (scaley, autoRender) {
             return this.setScale('+0', scaley, autoRender);
         },
-        setAlpha: function () {
-            return this;   
+        setOpacity: function (op, autoRender) {
+            this.set({opacity: op}, autoRender); 
+            this.opacity = Math.min(1, Math.max(this.opacity, 0));
+            return this;  
         } 
 
     });
