@@ -1,6 +1,6 @@
 KISSY.add(function (S, Sprite) {
 	
-	var LineSprite = Sprite.extend({
+	var PathSprite = Sprite.extend({
 		initialize: function (options) {
 			this.supr(options);
 			this.parent = null;
@@ -21,8 +21,6 @@ KISSY.add(function (S, Sprite) {
                 this.ctx.lineTo(p[i][0], p[i][1]);
             }
 
-            this.ctx.closePath();
-
             this.ctx.globalAlpha = this.opacity;
 
             if (lineWidth && lineWidth > 0) {
@@ -31,16 +29,25 @@ KISSY.add(function (S, Sprite) {
                 //fix lineWidth=1
                 this.ctx.stroke();
             }
+
+            this.ctx.closePath();
 		},
-		setLineWidth: function (w, autoRender) {
+		setWidth: function (w, autoRender) {
 			return this.set({lineWidth: w}, autoRender);
 		},
-		setLineColor: function (c, autoRender) {
+		setColor: function (c, autoRender) {
 			return this.set({lineColor: c}, autoRender);
-		}
+		},
+        setPoint: function (i, p, autoRender) {
+            if (i > 0 && i < this.points.length) {
+                this.points[i] = p;
+            }
+            autoRender && this.render();
+            return this;
+        }
 	});
 
-	return LineSprite;
+	return PathSprite;
 
 }, {
 	requires: ['./sprite']

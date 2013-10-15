@@ -232,7 +232,7 @@ KISSY.add(function (S, Cobject) {
             self.ctx.save();
             
             self.ctx.translate(self.x/2, self.y/2);
-            self.fire('render:before', self);
+            self.fire('render:before', dt);
             self._render(dt);
 
             for (var i = 0, len = self.children.length; i < len ; i++) {
@@ -243,7 +243,7 @@ KISSY.add(function (S, Cobject) {
             }
 
             self.ctx.restore();
-            self.fire('render:after', self);
+            self.fire('render:after', dt);
 
             return this;
         },

@@ -16,6 +16,7 @@ KISSY.add(function (S, Notifier) {
             this._on = true;
             this._lastStepTime = (+new Date);
             this._loop();
+            this.dt = 0.016;
         },
         _loop: function () {
             if (!this._on) { return }
@@ -32,6 +33,7 @@ KISSY.add(function (S, Notifier) {
             }
 
             me.fire('tick', dt);
+            me.dt = dt;
             me._lastStepTime = time;
         },
         stop: function () {

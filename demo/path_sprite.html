@@ -32,15 +32,23 @@ canvas {
         });
     }
 
-    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/linesprite', function (S, Ticker, RectSprite, LineSprite) {
+    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/pathsprite', function (S, Ticker, RectSprite, PathSprite) {
         var stage = new RectSprite('canvas');
 
-        var line = new LineSprite({
-            points: [[-50, 0], [50, 10]],
+        var line = new PathSprite({
+            points: [[-100, 0], [150, 80], [100, -100]],
             lineWidth: 1,
-            lineColor: 'red'
-        }).appendTo(stage);
+            lineColor: 'red',
 
+            _t: 0
+        }).appendTo(stage)
+        .on('render:before', function (dt) {
+            this._t += Ticker.singleton.dt;
+            if (this._t > 1) { 
+                this.setPoint(1, [(20-Math.random()*40), (100-Math.random()*200)]);
+                this._t -= 1;
+            }
+        });
 
         Ticker.singleton.on('tick', function (dt) {
             stage.clear();
