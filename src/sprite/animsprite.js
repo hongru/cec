@@ -6,6 +6,10 @@ KISSY.add(function (S, RectSprite) {
 	 * 		loop: true,
 	 * 		frameNum:,
 	 *		frameRate:,
+	 		imgWidth:,
+	 		imgHeight:,
+	 		arrangeDir:,
+	 		//if `imgWidth & imgWidth` in `animConfig`, you can do without `frameData`
  	 *		frameData: []
 	 * }
 	 */
@@ -17,8 +21,9 @@ KISSY.add(function (S, RectSprite) {
 			this._autoPlay = this.animConfig.autoPlay == undefined ? true : this.animConfig.autoPlay;
 			this._loop = this.animConfig.loop == undefined ? true : this.animConfig.loop;
 			this._frameNum = this.animConfig.frameNum;
-			this._frameRate = this.animConfig.frameRate;
-			this._frames = this.animConfig.frameData;
+			this._frameRate = this.animConfig.frameRate || 10;
+			this._arrangeDir = this.animConfig.arrangeDir || 'h'; // or 'v'
+			this._frames = this._getFrames();
 			this._time = 0;
 
 			this.playing = false;
@@ -28,6 +33,34 @@ KISSY.add(function (S, RectSprite) {
 			this.animationLength = this._frameNum/this._frameRate;
 
 			this._autoPlay && this.play();
+		},
+
+		_getFrames: function () {
+			var frames = [];
+			if (Object.prototype.toString.call(this.animConfig.frameData) == '[object Array]' && this.animConfig.frameData.length) {
+				frames = this.animConfig.frameData;
+			} else if (this.animConfig.imgWidth && this.animConfig.imgHeight) {
+				var _x = 0, _y = 0;
+				for (var i = 0; i < this._frameNum; i ++) {
+					if (this._arrangeDir == 'h') {
+						var fw = this.animConfig.imgWidth/this._frameNum,
+							fh = this.animConfig.imgHeight;
+						var f = [_x, 0, fw, fh];
+						_x += fw;
+						_x = Math.min((this.animConfig.imgWidth - fw), _x);
+						frames.push(f);
+					} else if (this._arrangeDir == 'v') {
+						var fw = this.animConfig.imgWidth,
+							fh = this.animConfig.imgHeight/this._frameNum;
+						var f = [0, _y, fw, fh];
+						_y += fh;
+						_y = Math.min((this.animConfig.imgHeight - fh), _y);
+						frames.push(f);
+					}
+				}
+			}
+			this._frames = frames;
+			return frames;
 		},
 
 		_drawBackgroundImage: function (dt) {
@@ -74,7 +107,19 @@ KISSY.add(function (S, RectSprite) {
 		},
 		setFrame: function (ind) {
 			this.currentFrame = Math.min(this._frameNum, Math.max(parseInt(ind), 0));
+			this.frameWidth = this._frames[this.currentFrame][2];
+			this.frameHeight = this._frames[this.currentFrame][3];
 			return this;
+		},
+		nextFrame: function () {
+			var nf = this.currentFrame + 1;
+			if (this._loop && nf > this._frameNum - 1) nf = 0;
+			return this.setFrame(nf);
+		},
+		prevFrame: function () {
+			var pf = this.currentFrame - 1;
+			if (this._loop && pf < 0) pf = this._frameNum - 1;
+			return this.setFrame(pf);
 		},
 		setSpeed: function (sp) {
 			var _oldRate = this._frameRate;

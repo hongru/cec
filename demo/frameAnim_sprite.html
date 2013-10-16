@@ -37,7 +37,7 @@ canvas {
 
         var anim = new AnimSprite({
             x: 0,
-            y: 0,
+            y: -150,
             width: 300,
             height: 250,
             backgroundImage: './images/package/2.png',
@@ -56,9 +56,26 @@ canvas {
         })
         .appendTo(stage);
 
+        var anim2 = new AnimSprite({
+            x: 0,
+            y: 150,
+            width: 300,
+            height: 250,
+            backgroundImage: './images/package/4.png',
+            // animConfig  如果包涵imgWidth, imgHeight 字段，不配置frameData的话,会自动依据图片高宽　和　帧排列方向生成frame 数据
+            animConfig: {
+                frameNum: 4,
+                imgWidth: 2002,
+                imgHeight: 502,
+                arrangeDir: 'h'
+            }
+        }).appendTo(stage);
+
         function update (dt) {
             anim.setX('-'+dt*200);
+            anim2.setX('-'+dt*300);
             if (anim.x < -stage.width/2 - anim.width/2) anim.setX((stage.width+anim.width)/2);
+            if (anim2.x < -stage.width/2 - anim2.width/2) anim2.setX((stage.width+anim2.width)/2);
         }
 
         Ticker.singleton.on('tick', function (dt) {
