@@ -33,32 +33,27 @@ canvas {
             ]
         });
     }
-
-    S.use('cec/ticker/,cec/sprite/sprite', function (S, Ticker, Sprite) {
+    //todo
+    // delegate bug when rotate and scale
+    S.use('cec/ticker/,cec/sprite/rectsprite', function (S, Ticker, Sprite) {
         var stage = new Sprite('canvas');
 
         for (var i = 0; i < 50; i ++) {
             var rect = new Sprite({
-                x: Math.random() * stage.width,
-                y: Math.random() * stage.height,
+                x: (stage.width/2 - Math.random() * stage.width),
+                y: (stage.height/2 - Math.random() * stage.height),
                 width: 40,
-                height: 40
-            }).on('render', function (s) {
-                s.ctx.beginPath();
-                s.ctx.rect(0,0,s.width, s.height);
-                s.ctx.fillStyle = s.bgColor || '#aaa';
-                s.ctx.strokeStyle = '#fff';
-                s.ctx.stroke();
-                s.ctx.fill();
-                s.ctx.closePath();
-            });
-            stage.add(rect);
+                height: 40,
+                fillColor: '#ccc',
+                borderWidth: 1,
+                borderColor: '#333'
+            }).appendTo(stage);
         }
 
         stage.delegate('click', function (e) {
-            e.targetSprite.bgColor = 'red';
+            (e.targetSprite.type == 'sprite') && e.targetSprite.setFillColor('red');
         }).delegate('touchstart', function (e) { 
-            e.targetSprite.bgColor = 'red';
+            e.targetSprite.type == 'sprite' && e.targetSprite.setFillColor('red');
         });
 
 

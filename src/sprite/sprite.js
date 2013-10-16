@@ -104,13 +104,14 @@ KISSY.add(function (S, Cobject) {
 
                     if (/touch/.test(ev) && e.touches[0]) {
                         var touch = e.touches[0];
-                        stageOffsetX = touch.pageX - of.left;
-                        stageOffsetY = touch.pageY - of.top;
+                        stageOffsetX = touch.pageX - of.left - of.width/2;
+                        stageOffsetY = touch.pageY - of.top - of.height/2;
                     } else {
-                        stageOffsetX = e.clientX + winScroll.x - of.left;
-                        stageOffsetY = e.clientY + winScroll.y - of.top;
+                        stageOffsetX = e.clientX + winScroll.x - of.left - of.width/2;
+                        stageOffsetY = e.clientY + winScroll.y - of.top - of.height/2;
                     }
 
+                    //console.log(stageOffsetX, stageOffsetY)
                     var target = self._findTarget(stageOffsetX, stageOffsetY);
                     e.targetSprite = target;
                     //e._target = target;
@@ -118,6 +119,7 @@ KISSY.add(function (S, Cobject) {
                     e.stageOffsetY = stageOffsetY;
                     e.spriteOffsetX = target._ev_offsetX;
                     e.spriteOffsetY = target._ev_offsetY;
+                    console.log(stageOffsetX,stageOffsetY,e.spriteOffsetX,e.spriteOffsetY)
 
                     delete target._ev_offsetX;
                     delete target._ev_offsetY;
@@ -138,10 +140,10 @@ KISSY.add(function (S, Cobject) {
                 if (o.children && o.children.length) {
                     for (var i = 0, len = o.children.length; i < len; i ++) {
                         var c = o.children[i],
-                            posc = [l + c.x, t + c.y, l + c.x + c.width, t + c.y + c.height];
+                            posc = [l + c.x - c.width/2, t + c.y - c.height/2, l + c.x + c.width/2, t + c.y + c.height/2];
                         if (x > posc[0] && x < posc[2] && y > posc[1] && y < posc[3]) {
-                            c._ev_offsetX = x - posc[0];
-                            c._ev_offsetY = y - posc[1];
+                            c._ev_offsetX = x - (l + c.x);
+                            c._ev_offsetY = y - (t + c.y);
                             hoverSprites.push(c);
                         }
                         find(c, posc[0], posc[1]);
@@ -212,6 +214,40 @@ KISSY.add(function (S, Cobject) {
         },
         contains: function (c) {
             return (this.getChildIndex(c) > -1);
+        },
+        containsPoint: function (p) {
+            var x, y;
+            if (Object.prototype.toString.call(p) == '[object Array]') {
+                x = p[0];
+                y = p[1];
+            } else if (typeof p == 'object') {
+                x = p.x;
+                y = p.y;
+            }
+
+            var cross = 0;
+            for (var i = 0, len = this.points.length; i < len; i ++) {
+                var p0 = this.points[i],
+                    p1 = i == len -1 ? this.points[0] : this.points[i + 1],
+                    p0p1 = Math.sqrt(Math.pow(p1[0]-p0[0], 2) + Math.pow(p1[1]-p0[1], 2)),
+                    pp0 = Math.sqrt(Math.pow(p0[0]-x, 2) + Math.pow(p0[1]-y, 2)),
+                    pp1 = Math.sqrt(Math.pow(p1[0]-x, 2) + Math.pow(p1[1]-y, 2)),
+                    maxY = Math.max(p0[1], p1[1]),
+                    minY = Math.min(p0[1], p1[1]);
+
+                if (pp0 + pp1 == p0p1) {
+                    return true;
+                } else if (y < minY || y > maxY) {
+                    continue;
+                } else {
+                    var _x = (y-minY)*(p1[0]-p0[0])/(p1[1]-p0[1]);
+                    if (_x > x) {
+                        cross ++
+                    }
+                }
+            }
+
+            return (cross%2 == 1);
         },
         isVisible: function () {
             var self = this;
