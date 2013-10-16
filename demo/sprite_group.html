@@ -49,6 +49,7 @@ canvas {
                 y: (100-Math.random()*container.height),
                 points: [[-10,-10],[10,-10],[10,10],[-10,10]]
             }).setFillColor('#ff4a00').appendTo(container);
+            console.log(rect.id);
         }
 
         Ticker.singleton.on('tick', function (dt) {

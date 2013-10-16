@@ -43,6 +43,17 @@ KISSY.add(function (S, Notifier) {
                 */
                 this.type = 'sprite';
             }
+
+            this._getUniqueId();
+        },
+        _getUniqueId: function () {
+            var i = 0;
+            return function () {
+                this.id = (i++);
+            }
+        }(),
+        getId: function () {
+            return this.id;
         }
     });
 
