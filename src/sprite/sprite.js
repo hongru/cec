@@ -302,23 +302,25 @@ KISSY.add(function (S, Cobject) {
         // set 
         set: function (param, autoRender) {
             for (var k in param) {
-                var matchSymbol = (''+param[k]).match(/^([\+\-\*\/])(\d+(\.\d+)?)$/);
-                if (matchSymbol) { 
-                    var symbol = matchSymbol[1],
-                        num = parseFloat(matchSymbol[2]);
-                    switch(symbol) {
-                        case '+':
-                            param[k] = parseFloat(this[k]) + num;
-                            break;
-                        case '-':
-                            param[k] = parseFloat(this[k]) - num;
-                            break;
-                        case '*':
-                            param[k] = parseFloat(this[k]) * num;
-                            break;
-                        case '/':
-                            param[k] = parseFloat(this[k]) / num;
-                            break;
+                if (typeof param[k] == 'string') {
+                    var matchSymbol = (''+param[k]).match(/^([\+\-\*\/])(\d+(\.\d+)?)$/);
+                    if (matchSymbol) { 
+                        var symbol = matchSymbol[1],
+                            num = parseFloat(matchSymbol[2]);
+                        switch(symbol) {
+                            case '+':
+                                param[k] = parseFloat(this[k]) + num;
+                                break;
+                            case '-':
+                                param[k] = parseFloat(this[k]) - num;
+                                break;
+                            case '*':
+                                param[k] = parseFloat(this[k]) * num;
+                                break;
+                            case '/':
+                                param[k] = parseFloat(this[k]) / num;
+                                break;
+                        }
                     }
                 }
                 this[k] = param[k];
