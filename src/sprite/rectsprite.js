@@ -16,28 +16,7 @@ KISSY.add(function (S, Sprite) {
 			];
 		},
 		set: function (param, autoRender) {
-			for (var k in param) {
-                var matchSymbol = (''+param[k]).match(/^([\+\-\*\/])(\d+(\.\d+)?)$/);
-                if (matchSymbol) { 
-                    var symbol = matchSymbol[1],
-                        num = parseFloat(matchSymbol[2]);
-                    switch(symbol) {
-                        case '+':
-                            param[k] = parseFloat(this[k]) + num;
-                            break;
-                        case '-':
-                            param[k] = parseFloat(this[k]) - num;
-                            break;
-                        case '*':
-                            param[k] = parseFloat(this[k]) * num;
-                            break;
-                        case '/':
-                            param[k] = parseFloat(this[k]) / num;
-                            break;
-                    }
-                }
-                this[k] = param[k];
-            }
+			this._set(param);
             if (/^([\+\-\*\/])?\d+$/.test(param['width']) || /^([\+\-\*\/])?\d+$/.test(param['height'])) {
             	this.updatePoints();	
             }

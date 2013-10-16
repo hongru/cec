@@ -299,8 +299,7 @@ KISSY.add(function (S, Cobject) {
             }
             return this;
         },
-        // set 
-        set: function (param, autoRender) {
+        _set: function (param) {
             for (var k in param) {
                 if (typeof param[k] == 'string') {
                     var matchSymbol = (''+param[k]).match(/^([\+\-\*\/])(\d+(\.\d+)?)$/);
@@ -325,6 +324,11 @@ KISSY.add(function (S, Cobject) {
                 }
                 this[k] = param[k];
             }
+            return this;
+        },
+        // set 
+        set: function (param, autoRender) {
+            this._set(param);
             if (autoRender && this.stage) {
                 this.stage.clear();
                 this.stage.render();
