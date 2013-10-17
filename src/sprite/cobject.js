@@ -14,8 +14,11 @@ KISSY.add(function (S, Notifier) {
         zIndex: 0,
         visible: true,
         backgroundImage: null,
-        backgroundPosition: null,
-        backgroundSize: null,
+        backgroundRepeat: 'repeat', // repeat|repeat-x|repeat-y|no-repeat
+        backgroundPosition: '0 0', // '0 0'
+        backgroundPositionX: 0,
+        backgroundPositionY: 0,
+        backgroundSize: null, // 'auto auto'
 
         initialize: function (options) {
             if (!options) return;

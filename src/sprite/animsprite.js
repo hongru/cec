@@ -18,6 +18,8 @@ KISSY.add(function (S, RectSprite) {
 		initialize: function (options) {
 			this.supr(options);
 
+			this.backgroundRepeat = 'no-repeat';
+
 			this._autoPlay = this.animConfig.autoPlay == undefined ? true : this.animConfig.autoPlay;
 			this._loop = this.animConfig.loop == undefined ? true : this.animConfig.loop;
 			this._frameNum = this.animConfig.frameNum;
@@ -79,6 +81,7 @@ KISSY.add(function (S, RectSprite) {
                     ih = this.backgroundImageElement.height,
                     bgPos = this.backgroundPosition || [0, 0],
                     frame = this._frames[this.currentFrame];
+                if (typeof bgPos == 'string') bgPos = bgPos.split(' ');
 
                 if (this.shape == 'rect') {
                 	// frame 0
