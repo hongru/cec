@@ -10,13 +10,40 @@ KISSY.add(function (S, Cobject) {
 
             this.parent = null;
             this.children = [];
+            this.boundingRect = [];
             
             this._imgLength = -1;
             this.backgroundImageReady = false;
             this.loadedImgs = [];
 
+            this._updateBounding();
             this._dealImgs();
             
+        },
+        _updateBounding: function () {
+            // get bounding rect
+            if (this.points) {
+                var xs = [],
+                    ys = [],
+                    minX, maxX, minY, maxY;
+                this.points.forEach(function (o) {
+                    xs.push(o[0]);
+                    ys.push(o[1]);
+                });
+
+                minX = Math.min.apply(null, xs);
+                maxX = Math.max.apply(null, xs);
+                minY = Math.min.apply(null, ys);
+                maxY = Math.max.apply(null, ys);
+
+                this.boundingRect = [[minX, minY], [maxX, minY], [maxX, maxY], [minX, maxY]];
+                this.width = Math.abs(maxX - minX);
+                this.height = Math.abs(maxY - minY);
+
+            } else if (this.width && this.height) {
+                this.points = [[0, 0], [this.width, 0], [this.width, this.height], [0, this.height]];
+                this.boundingRect = this.points;
+            }
         },
         _dealImgs: function () {
             var self = this;
@@ -265,38 +292,40 @@ KISSY.add(function (S, Cobject) {
 
             if (!self.visible) {return}
 
-            self.ctx.save();
-            
-            self.ctx.translate(self.x/2, self.y/2);
             self.fire('render:before', dt);
             self._render(dt);
 
+            self.ctx.save();
             for (var i = 0, len = self.children.length; i < len ; i++) {
                 self.ctx.save();
-                self.ctx.translate(self.children[i].x/2, self.children[i].y/2);
+                self.ctx.translate(self.children[i].x, self.children[i].y);
                 self.children[i].render(dt);
                 self.ctx.restore();
             }
-
             self.ctx.restore();
             self.fire('render:after', dt);
 
             return this;
         },
         _render: function (dt) {
-            var p = this.points;
+            var p = this.points,
+                relativeX = this.width/2,
+                relativeY = this.height/2;
             
             this.ctx.fillStyle = this.fillColor;
+
+            this.ctx.translate(relativeX, relativeY);
             this.ctx.rotate(this.angle * Math.PI/180);
             this.ctx.scale(this.scaleX, this.scaleY);
 
             this.ctx.beginPath();
-            this.ctx.moveTo(p[0][0], p[0][1]);
+            this.ctx.moveTo(p[0][0]-relativeX, p[0][1]-relativeY);
             for (var i = 1, len = p.length; i < len; i ++) {
-                this.ctx.lineTo(p[i][0], p[i][1]);
+                this.ctx.lineTo(p[i][0]-relativeX, p[i][1]-relativeY);
             }
-            this.ctx.lineTo(p[0][0], p[0][1]);
+            this.ctx.lineTo(p[0][0]-relativeX, p[0][1]-relativeY);
             this.ctx.closePath();
+            this.ctx.translate(-relativeX, -relativeY);
 
             this.ctx.globalAlpha = this.opacity;
             this.fillColor && this.ctx.fill();
@@ -311,8 +340,8 @@ KISSY.add(function (S, Cobject) {
 
         },
         clear: function (x, y, w, h) {
-            if (x == undefined) x = -this.width/2;
-            if (y == undefined) y = -this.height/2;
+            if (x == undefined) x = 0;
+            if (y == undefined) y = 0;
             if (w == undefined) w = this.width;
             if (h == undefined) h = this.height;
             this.ctx.clearRect(x, y, w, h);

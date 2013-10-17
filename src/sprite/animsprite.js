@@ -82,7 +82,7 @@ KISSY.add(function (S, RectSprite) {
 
                 if (this.shape == 'rect') {
                 	// frame 0
-                    this.ctx.drawImage(this.backgroundImageElement, frame[0], frame[1], frame[2], frame[3], bgPos[0]-this.width/2, bgPos[1]-this.height/2, this.width, this.height);
+                    this.ctx.drawImage(this.backgroundImageElement, frame[0], frame[1], frame[2], frame[3], bgPos[0], bgPos[1], this.width, this.height);
                 }
             }
 		},

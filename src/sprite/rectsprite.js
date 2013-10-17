@@ -4,21 +4,16 @@ KISSY.add(function (S, Sprite) {
 	var RectSprite = Sprite.extend({
 		initialize: function (options) {
 			this.supr(options);
-			this.updatePoints();
 			this.shape = 'rect';
 		},
-		updatePoints: function () {
-			this.points = [
-				[-this.width/2, -this.height/2],
-				[this.width/2, -this.height/2],
-				[this.width/2, this.height/2],
-				[-this.width/2, this.height/2]
-			];
-		},
+        _updatePoints: function () {
+            this.points = [[0,0], [this.width, 0], [this.width, this.height], [0, this.height]];
+        },
 		set: function (param, autoRender) {
 			this._set(param);
             if (/^([\+\-\*\/])?\d+$/.test(param['width']) || /^([\+\-\*\/])?\d+$/.test(param['height'])) {
-            	this.updatePoints();	
+                this._updatePoints();
+            	this._updateBounding();	
             }
             if (autoRender && this.stage) {
                 this.stage.clear();
@@ -54,7 +49,7 @@ KISSY.add(function (S, Sprite) {
                 if (bgPos[1] < 0) sy = -bgPos[1];
                 //rect sprite support image
                 if (this.shape == 'rect') {
-                    this.ctx.drawImage(this.backgroundImageElement, sx, sy, iw-sx, ih-sy, bgPos[0]-this.width/2, bgPos[1]-this.height/2, iw, ih);
+                    this.ctx.drawImage(this.backgroundImageElement, sx, sy, iw-sx, ih-sy, bgPos[0], bgPos[1], iw, ih);
                 }
             }
 		}

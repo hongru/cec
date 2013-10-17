@@ -39,26 +39,28 @@ canvas {
 
         var rect = new Sprite({
             x: 100,
-            y: 0,
-            points: [
-                [-50,-30], [0, -65], [50, -30], [30, 30], [-30, 30]
-            ],
+            y: 100,
+            //points: [
+            //    [-50,-30], [0, -65], [50, -30], [30, 30], [-30, 30]
+            //],
+            width: 70,
+            height: 50,
             _vx: 1.5,
             _vy: 1
         }).on('render:before', function (dt) {
             var s = this;
             s.fillColor = '#ff4a00';
             s.angle += 1;
-            if ((s._vx > 0 && s.x + s._vx > stage.width/2) || (s._vx < 0 && s.x + s._vx < -stage.width/2)) {
+            if ((s._vx > 0 && s.x + s._vx > stage.width - this.width) || (s._vx < 0 && s.x + s._vx < 0)) {
                 s._vx *= -1;
             }
-            if ((s._vy > 0 && s.y + s._vy > stage.height/2) || (s._vy < 0 && s.y + s._vy < -stage.height/2)) {
+            if ((s._vy > 0 && s.y + s._vy > stage.height - this.height) || (s._vy < 0 && s.y + s._vy < 0)) {
                 s._vy *= -1;
             }
 
             s.x += s._vx;
             s.y += s._vy;
-        }).moveTo(-100, -100);
+        });
         stage.add(rect);
 
 

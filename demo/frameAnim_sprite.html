@@ -36,8 +36,8 @@ canvas {
         var stage = new RectSprite('canvas');
 
         var anim = new AnimSprite({
-            x: 0,
-            y: -150,
+            x: 150,
+            y: 50,
             width: 300,
             height: 250,
             backgroundImage: './images/package/2.png',
@@ -57,8 +57,8 @@ canvas {
         .appendTo(stage);
 
         var anim2 = new AnimSprite({
-            x: 0,
-            y: 150,
+            x: 200,
+            y: 300,
             width: 300,
             height: 250,
             backgroundImage: './images/package/4.png',
@@ -74,8 +74,8 @@ canvas {
         function update (dt) {
             anim.setX('-'+dt*200);
             anim2.setX('-'+dt*300);
-            if (anim.x < -stage.width/2 - anim.width/2) anim.setX((stage.width+anim.width)/2);
-            if (anim2.x < -stage.width/2 - anim2.width/2) anim2.setX((stage.width+anim2.width)/2);
+            if (anim.x < -anim.width) anim.setX(stage.width+anim.width);
+            if (anim2.x < -anim2.width) anim2.setX(stage.width+anim2.width);
         }
 
         Ticker.singleton.on('tick', function (dt) {

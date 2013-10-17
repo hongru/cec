@@ -42,6 +42,7 @@ KISSY.add(function (S, Sprite) {
             if (i > 0 && i < this.points.length) {
                 this.points[i] = p;
             }
+            this._updateBounding();
             autoRender && this.render();
             return this;
         }
