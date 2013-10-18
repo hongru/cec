@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<!--kissy seed for browser -->
+<script src="http://g.tbcdn.cn/kissy/k/1.3.2/seed.js"></script>
+<style>
+canvas {
+    display: block;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+}
+</style>
+</head>
+
+<body>
+<canvas id="canvas" width="962" height="641"></canvas>
+
+<script>
+    var S = KISSY;
+    if (S.Config.debug) {
+        S.config({
+            packages:[
+                {
+                    name:"cec",
+                    path:'../src/',
+                    charset:"utf-8",
+                    ignorePackageNameInUri:true
+                }
+            ]
+        });
+    }
+
+    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/animsprite', function (S, Ticker, RectSprite, AnimSprite) {
+        var stage = new RectSprite('canvas');
+
+        var bg1 = new RectSprite({
+            x: 0,
+            y: 0,
+            width: 962,
+            height: 171,
+            backgroundImage: './images/package/pkg_01.jpg',
+            backgroundRepeat: 'no-repeat'
+        }).appendTo(stage);
+
+        var bg2 = new RectSprite({
+            x: 0,
+            y: 435,
+            width: 962,
+            height: 205,
+            backgroundImage: './images/package/pkg_05.png',
+            backgroundRepeat: 'no-repeat'
+        }).appendTo(stage);
+
+        var repeat = new RectSprite({
+            x: 0,
+            y: 171,
+            width: 962,
+            height: 265,
+            backgroundImage: './images/package/pkg_03.png',
+            backgroundRepeat: 'repeat-x'
+        }).appendTo(stage)
+        .on('render:before', function (dt) {
+            this.setBackgroundPositionX('-5');
+        });
+
+        var pkgCont = new RectSprite({
+            x: 0,
+            y: 170,
+            width: 962,
+            height: 250
+        }).appendTo(stage);
+
+        function addPkgs (x) {
+            x = x || 1000;
+            var pkg = new AnimSprite({
+                name: 'package',
+                x: x,
+                y: 0,
+                width: 300,
+                height: 250,
+                backgroundImage: './images/package/4.png',
+                // animConfig  如果包涵imgWidth, imgHeight 字段，不配置frameData的话,会自动依据图片高宽　和　帧排列方向生成frame 数据
+                animConfig: {
+                    autoPlay: false,
+                    frameNum: 4,
+                    frameRate: 8,
+                    loop: false,
+                    imgWidth: 2002,
+                    imgHeight: 502,
+                    arrangeDir: 'h'
+                }
+
+            }).appendTo(pkgCont)
+            .on('render:before', function (dt) {
+                this.setX('-5');
+            });
+        }
+        
+        function checkPkgs () {
+            for (var i = 0; i < pkgCont.children.length; i ++) {
+                var o = pkgCont.children[i];
+                o.x < -300 && o.remove();
+            }
+            if (pkgCont.children.length < 4) {
+                var n = 4 - pkgCont.children.length;
+                for (var i = 0; i < n; i ++) {
+                    addPkgs(pkgCont.children[pkgCont.children.length-1].x + 350);
+                }
+            }
+        }
+
+        addPkgs();
+
+        stage.delegate('click', function (e) {
+            if (e.targetSprite.name == 'package') {
+                e.targetSprite.play();
+            }
+        });
+
+        Ticker.singleton.on('tick', function (dt) {
+            stage.clear();
+            checkPkgs();
+            stage.render(dt);
+        }); 
+    });
+</script>
+</body>
+</html>

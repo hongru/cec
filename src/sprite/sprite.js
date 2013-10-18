@@ -131,11 +131,11 @@ KISSY.add(function (S, Cobject) {
 
                     if (/touch/.test(ev) && e.touches[0]) {
                         var touch = e.touches[0];
-                        stageOffsetX = touch.pageX - of.left - of.width/2;
-                        stageOffsetY = touch.pageY - of.top - of.height/2;
+                        stageOffsetX = touch.pageX - of.left;
+                        stageOffsetY = touch.pageY - of.top;
                     } else {
-                        stageOffsetX = e.clientX + winScroll.x - of.left - of.width/2;
-                        stageOffsetY = e.clientY + winScroll.y - of.top - of.height/2;
+                        stageOffsetX = e.clientX + winScroll.x - of.left;
+                        stageOffsetY = e.clientY + winScroll.y - of.top;
                     }
 
                     //console.log(stageOffsetX, stageOffsetY)
@@ -146,7 +146,7 @@ KISSY.add(function (S, Cobject) {
                     e.stageOffsetY = stageOffsetY;
                     e.spriteOffsetX = target._ev_offsetX;
                     e.spriteOffsetY = target._ev_offsetY;
-                    console.log(stageOffsetX,stageOffsetY,e.spriteOffsetX,e.spriteOffsetY)
+                    //console.log(stageOffsetX,stageOffsetY,e.spriteOffsetX,e.spriteOffsetY)
 
                     delete target._ev_offsetX;
                     delete target._ev_offsetY;
@@ -167,7 +167,7 @@ KISSY.add(function (S, Cobject) {
                 if (o.children && o.children.length) {
                     for (var i = 0, len = o.children.length; i < len; i ++) {
                         var c = o.children[i],
-                            posc = [l + c.x - c.width/2, t + c.y - c.height/2, l + c.x + c.width/2, t + c.y + c.height/2];
+                            posc = [l + c.x, t + c.y, l + c.x + c.width, t + c.y + c.height];
                         if (x > posc[0] && x < posc[2] && y > posc[1] && y < posc[3]) {
                             c._ev_offsetX = x - (l + c.x);
                             c._ev_offsetY = y - (t + c.y);
