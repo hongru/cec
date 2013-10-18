@@ -286,6 +286,14 @@ KISSY.add(function (S, Cobject) {
             }
             return true;
         },
+        show: function () {
+            this.visible = true;
+            return this;
+        },
+        hide: function () {
+            this.visible = false;
+            return this;
+        },
         render: function (dt) {
             var self = this;
             dt = dt || 0.016;
