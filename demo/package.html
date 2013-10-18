@@ -58,8 +58,9 @@ canvas {
             y: 171,
             width: 962,
             height: 265,
-            backgroundImage: './images/package/pkg_03.png',
-            backgroundRepeat: 'repeat-x'
+            backgroundImage: './images/package/repeat.png',
+            backgroundRepeat: 'repeat-x',
+            backgroundSize: 'auto 100%'
         }).appendTo(stage)
         .on('render:before', function (dt) {
             this.setBackgroundPositionX('-5');
@@ -114,6 +115,10 @@ canvas {
         addPkgs();
 
         stage.delegate('click', function (e) {
+            if (e.targetSprite.name == 'package') {
+                e.targetSprite.play();
+            }
+        }).delegate('touchstart', function (e) {
             if (e.targetSprite.name == 'package') {
                 e.targetSprite.play();
             }

@@ -19,6 +19,8 @@ KISSY.add(function (S, Notifier) {
         backgroundPositionX: 0,
         backgroundPositionY: 0,
         backgroundSize: null, // 'auto auto'
+        backgroundWidth: 'auto',
+        backgroundHeight: 'auto',
 
         initialize: function (options) {
             if (!options) return;

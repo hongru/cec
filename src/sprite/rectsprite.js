@@ -5,10 +5,15 @@ KISSY.add(function (S, Sprite) {
 		initialize: function (options) {
 			this.supr(options);
 			this.shape = 'rect';
+            this._backgroundCanvas = document && document.createElement('canvas');
+            this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
 		},
         _checkImgs: function () {
             this.supr();
-            this.backgroundImageReady && this._getBackgrondPosition();
+            if (this.backgroundImageReady) {
+                this._getBackgroundPosition();
+                this._updateBackgroundCanvas();
+            }
         },
         _updatePoints: function () {
             this.points = [[0,0], [this.width, 0], [this.width, this.height], [0, this.height]];
@@ -36,19 +41,38 @@ KISSY.add(function (S, Sprite) {
 		setHeight: function (h, autoRender) {
 			return this.setDim('+0', h, autoRender);
 		},
-        setBackgroundPosition: function (x, y, autoRender) {
+        setBackgroundPosition: function (pos, autoRender) {
             if (!this.backgroundImageReady) return this;
-            return this.set({backgroundPosition:[x, y]}, autoRender);
+            this.set({backgroundPosition: (typeof pos == 'string' ? pos : pos.join(' '))}, autoRender);
+            this._getBackgroundPosition();
+            return this;
         },
         setBackgroundPositionX: function (x, autoRender) {
             if (!this.backgroundImageReady) return this;
             this.set({backgroundPositionX:x});
-            return this.setBackgroundPosition(this.backgroundPositionX, this.backgroundPositionY, autoRender);
+            return this.setBackgroundPosition([this.backgroundPositionX, this.backgroundPositionY], autoRender);
         },
         setBackgroundPositionY: function (y, autoRender) {
             if (!this.backgroundImageReady) return this;
             this.set({backgroundPositionY:y});
-            return this.setBackgroundPosition(this.backgroundPositionX, this.backgroundPositionY, autoRender);
+            return this.setBackgroundPosition([this.backgroundPositionX, this.backgroundPositionY], autoRender);
+        },
+        setBackgroundSize: function (size, autoRender) {
+            if (!this.backgroundImageReady) return this;
+            this.set({backgroundSize: (typeof size == 'string' ? size : size.join(' '))}, autoRender);
+            this._getBackgroundPosition();
+            this._updateBackgroundCanvas();
+            return this;
+        },
+        setBackgroundWidth: function (w, autoRender) {
+            if (!this.backgroundImageReady) return this;
+            this.set({backgroundWidth:w});
+            return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
+        },
+        setBackgroundHeight: function (h, autoRender) {
+            if (!this.backgroundImageReady) return this;
+            this.set({backgroundHeight:h});
+            return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
         },
 		_render: function (dt) {
 			this.supr(dt);
@@ -57,11 +81,13 @@ KISSY.add(function (S, Sprite) {
 		_drawBackgroundImage: function (dt) {
 			//images
             if (this.backgroundImageElement) {
-                var iw = this.backgroundImageElement.width,
-                    ih = this.backgroundImageElement.height,
+                var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
+                    imgEl = this._backgroundCanvas || this.backgroundImageElement,
+                    //imgEl = this.backgroundImageElement,
+                    iw = imgEl.width,
+                    ih = imgEl.height,
                     sx = 0,
                     sy = 0,
-                    bgPos = this._getBackgrondPosition(),
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;
 
                 //rect sprite support image
@@ -79,7 +105,8 @@ KISSY.add(function (S, Sprite) {
                             ch = ih-sy;
                         if (cx + iw > this.width) cw = this.width - cx;
                         if (cy + ih > this.height) ch = this.height - cy;
-                        this.ctx.drawImage(this.backgroundImageElement, sx, sy, cw, ch, cx, cy, cw, ch);
+
+                        this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), cx, cy, cw, ch);
 
                     } else if (this.backgroundRepeat == 'repeat-x') {
                         var col = Math.ceil(this.width/iw) + 1,
@@ -100,7 +127,8 @@ KISSY.add(function (S, Sprite) {
                             if (cy + ch > this.height) {
                                 ch = this.height - cy;
                             }
-                            this.ctx.drawImage(this.backgroundImageElement, sx, sy, cw, ch, Math.max(cx, 0), cy, cw, ch);
+
+                            this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), Math.max(cx, 0), cy, cw, ch);
                     
                         } 
                     } else if (this.backgroundRepeat == 'repeat-y') {
@@ -123,7 +151,8 @@ KISSY.add(function (S, Sprite) {
                             if (cy + ch > this.height) {
                                 ch = this.height - cy;
                             }
-                            this.ctx.drawImage(this.backgroundImageElement, sx, sy, cw, ch, Math.max(cx, 0), Math.max(cy, 0), cw, ch);
+
+                            this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.01, ch), Math.max(cx, 0), Math.max(cy, 0), cw, ch);
                         }
                         
 
@@ -149,18 +178,20 @@ KISSY.add(function (S, Sprite) {
                                 if (cy + ch > this.height) {
                                     ch = this.height - cy;
                                 }
-                                this.ctx.drawImage(this.backgroundImageElement, sx, sy, cw, ch, Math.max(cx, 0), Math.max(cy, 0), cw, ch);
+ 
+                                this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), Math.max(cx, 0), Math.max(cy, 0), cw, ch);
                             }
                         } 
                     }
                 }
             }
 		},
-        _getBackgrondPosition: function () {
+        _getBackgroundPosition: function () {
             var pos = [0, 0],
-                imgEl = this.backgroundImageElement,
-                imgWidth = imgEl.width,
-                imgHeight = imgEl.height;
+                bgsize = this._getBackgroundSize(),
+                imgEl = this._backgroundCanvas,
+                imgWidth = bgsize[0] || imgEl.width,
+                imgHeight = bgsize[1] || imgEl.height;
 
             if (typeof this.backgroundPosition == 'string') {
                 pos = this.backgroundPosition.split(' ');
@@ -181,6 +212,43 @@ KISSY.add(function (S, Sprite) {
             this.backgroundPositionX = pos[0];
             this.backgroundPositionY = pos[1];
             return pos;
+        },
+        _getBackgroundSize: function () {
+            var imgEl = this.backgroundImageElement,
+                imgWidth = imgEl.width,
+                imgHeight = imgEl.height,
+                bgsize = [imgWidth, imgHeight];
+            if (typeof this.backgroundSize == 'string') {
+                bgsize = this.backgroundSize.split(' ');
+                if (bgsize.length == 1) bgsize[1] = 'auto';
+                if (bgsize[0] == 'auto' && bgsize[1] == 'auto') {
+                    bgsize[0] = imgWidth;
+                    bgsize[1] = imgHeight;
+                } else if (bgsize[0] == 'auto') {
+                    bgsize[1] = /^[\+\-]?\d+\%$/.test(bgsize[1]) ? (this.height * parseFloat(bgsize[1])/100) : parseFloat(bgsize[1]);
+                    bgsize[0] = imgWidth*bgsize[1]/imgHeight;
+                } else if (bgsize[1] == 'auto') {
+                    bgsize[0] = /^[\+\-]?\d+\%$/.test(bgsize[0]) ? (this.width * parseFloat(bgsize[0])/100) : parseFloat(bgsize[0]);
+                    bgsize[1] = imgHeight*bgsize[0]/imgWidth;
+                } else {
+                    bgsize[0] = /^[\+\-]?\d+\%$/.test(bgsize[0]) ? (this.width * parseFloat(bgsize[0])/100) : parseFloat(bgsize[0]);
+                    bgsize[1] = /^[\+\-]?\d+\%$/.test(bgsize[1]) ? (this.height * parseFloat(bgsize[1])/100) : parseFloat(bgsize[1]);
+                }
+                bgsize[0] = Math.floor(Math.max(0, bgsize[0]));
+                bgsize[1] = Math.floor(Math.max(0, bgsize[1]));
+            }
+            this.backgroundWidth = bgsize[0];
+            this.backgroundHeight = bgsize[1];
+
+            return bgsize;
+        },
+        _updateBackgroundCanvas: function () {
+            var imgEl = this.backgroundImageElement,
+                imgWidth = imgEl.width,
+                imgHeight = imgEl.height;
+            this._backgroundCanvas.width = this.backgroundWidth;
+            this._backgroundCanvas.height = this.backgroundHeight;
+            this._backgroundCanvasCtx.drawImage(this.backgroundImageElement, 0, 0, imgWidth, imgHeight, 0, 0, this.backgroundWidth, this.backgroundHeight);
         }
 	});
 
