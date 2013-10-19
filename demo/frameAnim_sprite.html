@@ -32,7 +32,7 @@ canvas {
         });
     }
 
-    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/animsprite', function (S, Ticker, RectSprite, AnimSprite) {
+    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/animsprite_fix', function (S, Ticker, RectSprite, AnimSprite) {
         var stage = new RectSprite('canvas');
 
         var anim = new AnimSprite({
@@ -41,6 +41,7 @@ canvas {
             width: 300,
             height: 250,
             backgroundImage: './images/package/2.png',
+            backgroundSize: '100% 100%',
             animConfig: {
                 autoPlay: true,
                 loop: true,
@@ -69,7 +70,7 @@ canvas {
                 imgHeight: 502,
                 arrangeDir: 'h'
             },
-            backgroundSize: '50% 50%'
+            backgroundSize: '100% 100%'
         }).appendTo(stage);
 
         function update (dt) {

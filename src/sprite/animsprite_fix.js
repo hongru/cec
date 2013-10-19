@@ -64,9 +64,12 @@ KISSY.add(function (S, RectSprite) {
 			this._frames = frames;
 			return frames;
 		},
-
-		_drawBackgroundImage: function (dt) {
-			// get current frame
+		_render: function (dt) {
+			this.backgroundImageElement && this.playing && this._updateBackgroundCanvas(dt);
+			this.supr(dt);
+		},
+		_updateBackgroundCanvas: function (dt) {
+			dt = 0.016;
 			if (this.playing) {
 				this._time += dt;
 				if (this._time > this.animationLength && this._loop) {
@@ -75,20 +78,12 @@ KISSY.add(function (S, RectSprite) {
 				this.currentFrame = Math.min(Math.floor(this._time * this._frameRate), this._frameNum-1);
 				this.setFrame(this.currentFrame);
 			}
-
-			if (this.backgroundImageElement) {
-                var iw = this.backgroundImageElement.width,
-                    ih = this.backgroundImageElement.height,
-                    bgPos = this.backgroundPosition || [0, 0],
-                    frame = this._frames[this.currentFrame];
-                if (typeof bgPos == 'string') bgPos = bgPos.split(' ');
-
-                if (this.shape == 'rect') {
-                	// frame 0
-                    this.ctx.drawImage(this.backgroundImageElement, frame[0], frame[1], frame[2], frame[3], bgPos[0], bgPos[1], this.width, this.height);
-                }
-            }
+			var frame = this._frames[this.currentFrame];
+			this._backgroundCanvas.width = this.backgroundWidth;
+            this._backgroundCanvas.height = this.backgroundHeight;
+            this._backgroundCanvasCtx.drawImage(this.backgroundImageElement, frame[0], frame[1], frame[2], frame[3], 0, 0, this.backgroundWidth, this.backgroundHeight);
 		},
+
 		play: function () {
 			this._time = this.currentFrame/this._frameRate;
 			this.playing = true;

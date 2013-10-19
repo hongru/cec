@@ -215,8 +215,8 @@ KISSY.add(function (S, Sprite) {
         },
         _getBackgroundSize: function () {
             var imgEl = this.backgroundImageElement,
-                imgWidth = imgEl.width,
-                imgHeight = imgEl.height,
+                imgWidth = this.frameWidth || imgEl.width,
+                imgHeight = this.frameHeight || imgEl.height,
                 bgsize = [imgWidth, imgHeight];
             if (typeof this.backgroundSize == 'string') {
                 bgsize = this.backgroundSize.split(' ');
