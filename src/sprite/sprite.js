@@ -300,18 +300,19 @@ KISSY.add(function (S, Cobject) {
 
             if (!self.visible) {return}
 
+            self.ctx.save();
             self.fire('render:before', dt);
             self._render(dt);
-
-            self.ctx.save();
+            
             for (var i = 0, len = self.children.length; i < len ; i++) {
                 self.ctx.save();
                 self.ctx.translate(self.children[i].x, self.children[i].y);
                 self.children[i].render(dt);
                 self.ctx.restore();
             }
-            self.ctx.restore();
+            
             self.fire('render:after', dt);
+            self.ctx.restore();
 
             return this;
         },

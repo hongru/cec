@@ -69,7 +69,7 @@ KISSY.add(function (S, RectSprite) {
 			this.supr(dt);
 		},
 		_updateBackgroundCanvas: function (dt) {
-			dt = 0.016;
+			dt = dt || 0.016;
 			if (this.playing) {
 				this._time += dt;
 				if (this._time > this.animationLength && this._loop) {

@@ -85,6 +85,12 @@ canvas {
             update(dt);
             stage.render(dt);
         }); 
+
+        window.onerror = function () {
+            setTimeout(function () {
+                Ticker.singleton.stop();
+            }, 1000)
+        }
     });
 </script>
 </body>
