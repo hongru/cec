@@ -153,7 +153,7 @@ canvas {
             canvasEl.height = h;
             //console.log(w/oldWidth, h/oldHeight);
             stage.setScale(w/oldWidth, h/oldHeight);
-            //stage.setDim(w, h);
+            stage.moveTo((w-oldWidth)/2, (h-oldHeight)/2)
 
         }
         //resize();

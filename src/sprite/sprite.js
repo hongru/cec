@@ -301,6 +301,7 @@ KISSY.add(function (S, Cobject) {
             if (!self.visible) {return}
 
             self.ctx.save();
+            self.type == 'stage' && self.ctx.translate(self.x, self.y)
             self.fire('render:before', dt);
             self._render(dt);
             
