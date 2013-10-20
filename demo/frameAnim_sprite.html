@@ -16,6 +16,7 @@ canvas {
 
 <body>
 <canvas id="canvas" width="800" height="600"></canvas>
+<div id="fps" style="position:fixed;left:20px;top:20px"></div>
 
 <script>
     var S = KISSY;
@@ -32,7 +33,7 @@ canvas {
         });
     }
 
-    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/animsprite_fix', function (S, Ticker, RectSprite, AnimSprite) {
+    S.use('cec/ticker/,cec/sprite/rectsprite,cec/sprite/animsprite', function (S, Ticker, RectSprite, AnimSprite) {
         var stage = new RectSprite('canvas');
 
         var anim = new AnimSprite({
@@ -73,6 +74,24 @@ canvas {
             backgroundSize: '100% 100%'
         }).appendTo(stage);
 
+        for (var i = 0; i < 100; i++) {
+            stage.add(new AnimSprite({
+                x: Math.random()*stage.width,
+                y: Math.random()*stage.height,
+                width: 30,
+                height: 25,
+                backgroundImage: './images/package/4.png',
+                // animConfig  如果包涵imgWidth, imgHeight 字段，不配置frameData的话,会自动依据图片高宽　和　帧排列方向生成frame 数据
+                animConfig: {
+                    frameNum: 4,
+                    imgWidth: 2002,
+                    imgHeight: 502,
+                    arrangeDir: 'h'
+                },
+                backgroundSize: '100% 100%'
+            }));
+        }
+
         function update (dt) {
             anim.setX('-'+dt*200);
             anim2.setX('-'+dt*300);
@@ -80,11 +99,17 @@ canvas {
             if (anim2.x < -anim2.width) anim2.setX(stage.width+anim2.width);
         }
 
+        var fps = 60;
         Ticker.singleton.on('tick', function (dt) {
+            fps = Math.floor(1/dt);
             stage.clear();
             update(dt);
             stage.render(dt);
         }); 
+
+        setInterval(function () {
+            document.getElementById('fps').innerHTML = 'FPS: ' + fps;
+        }, 1000)
 
         window.onerror = function () {
             setTimeout(function () {
