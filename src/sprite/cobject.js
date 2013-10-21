@@ -59,9 +59,9 @@ KISSY.add(function (S, Notifier) {
         getId: function () {
             return this.id;
         },
-        _getFixZIndex: function (z) {
+        _getFixZIndex: function () {
             var map = {}
-            return function () {
+            return function (z) {
                 if (typeof map[z] != 'number') {
                     map[z] = 0;
                 }

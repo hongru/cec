@@ -2,6 +2,7 @@
 KISSY.add(function (S, Sprite) {
 	
 	var RectSprite = Sprite.extend({
+
 		initialize: function (options) {
 			this.supr(options);
 			this.shape = 'rect';
