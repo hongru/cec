@@ -38,12 +38,13 @@ KISSY.add(function (S, Notifier) {
                 this.type = 'stage';
                 this.shape = 'rect';
             } else {
-                this.mix(options);
-                /*
+                //this.mix(options);
+                
                 for (var k in options) {
+                    if (options[k] === undefined) continue;
                     this[k] = options[k];
                 }
-                */
+                
                 this.type = 'sprite';
             }
 
@@ -57,7 +58,17 @@ KISSY.add(function (S, Notifier) {
         }(),
         getId: function () {
             return this.id;
-        }
+        },
+        _getFixZIndex: function (z) {
+            var map = {}
+            return function () {
+                if (typeof map[z] != 'number') {
+                    map[z] = 0;
+                }
+                map[z] ++;
+                return (z + map[z]/10000);
+            }
+        }()
     });
 
     return Cobject;

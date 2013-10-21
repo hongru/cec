@@ -188,12 +188,18 @@ KISSY.add(function (S, Cobject) {
             o.stage = this.type == 'stage' ? this : this.stage;
             o.canvas = this.canvas;
             o.ctx = this.ctx;
+            o._zindex = this._getFixZIndex(parseInt(o.zIndex));
+
             this.children.push(o);
             this.children.sort(function (a, b) {
-                return a.zIndex - b.zIndex;
+                return a._zindex - b._zindex;
             });
 
             return this;
+        },
+        setZIndex: function (z) {
+            this.zIndex = parseInt(z);
+            this._zindex = this._getFixZIndex(this.zIndex);
         },
         appendTo: function (o) {
             //console.log(o instanceof Sprite);
