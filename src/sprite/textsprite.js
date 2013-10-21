@@ -156,12 +156,18 @@ KISSY.add(function (S, RectSprite) {
                     maxHeight = this.height - this.textOffsetTop - this.textOffsetBottom,
                     cvs = this._textCanvas,
                     ctx = this._textCtx,
-                    text = this.text;
+                    text = this.text,
+                    me = this;
 
                 cvs.width = maxWidth;
                 cvs.height = maxHeight; 
                 ctx.font = [this.fontStyle, this.fontWeight, (this.fontSize + 'px'), this.fontFamily].join(' ');
-                ctx.fillStyle = this.textColor;
+
+                if (this.textType == 'stroke') {
+                    ctx.strokeStyle = this.textColor;
+                } else if (this.textType == 'fill') {
+                    ctx.fillStyle = this.textColor;
+                }
 
                 var line = '',
                     x = 0,
@@ -185,7 +191,7 @@ KISSY.add(function (S, RectSprite) {
                             metrics = ctx.measureText(testLine);
                         //console.log(testLine, metrics.width)
                         if (metrics.width > maxWidth && i > 0) {
-                            ctx.fillText(line, x, y);
+                            me.textType == 'stroke' ? ctx.strokeText(line, x, y) : ctx.fillText(line, x, y);
                             line = text[i] + '';
                             y += lh;
                         }
@@ -193,7 +199,7 @@ KISSY.add(function (S, RectSprite) {
                             line = testLine;
                         }
                     }
-                    ctx.fillText(line, x, y);      
+                    me.textType == 'stroke' ? ctx.strokeText(line, x, y) : ctx.fillText(line, x, y);    
                 }
                  
                 drawText();
