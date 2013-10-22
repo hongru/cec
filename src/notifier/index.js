@@ -6,7 +6,7 @@ KISSY.add(function (S, Klass) {
             var evs = this._events[ev];
             var args = Array.prototype.slice.call(arguments, 1);
             if (evs && evs.length) {
-                for (var i in evs) {
+                for (var i = 0; i < evs.length; i ++) {
                     evs[i].apply(this, args);
                 }
             }

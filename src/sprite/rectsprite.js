@@ -89,75 +89,49 @@ KISSY.add(function (S, Sprite) {
                     //imgEl = this.backgroundImageElement,
                     iw = imgEl.width,
                     ih = imgEl.height,
-                    sx = 0,
-                    sy = 0,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;
 
                 //rect sprite support image
                 if (this.shape == 'rect') {
-                    //this.ctx.drawImage(this.backgroundImageElement, sx, sy, iw-sx, ih-sy, bgPos[0] + fixPos, bgPos[1] + fixPos, iw, ih);
-                    //var pat = this.ctx.createPattern(this.backgroundImageElement, this.backgroundRepeat);
-                    //this.ctx.fillStyle = pat;
-                    //this.ctx.fillRect(bgPos[0] - 10, bgPos[1], this.width, this.height);
-                    if (this.backgroundRepeat == 'no-repeat') {
-                        if (bgPos[0] < 0) sx = -bgPos[0];
-                        if (bgPos[1] < 0) sy = -bgPos[1];
-                        var cx = bgPos[0] < 0 ? 0 : bgPos[0],
-                            cy = bgPos[1] < 0 ? 0 : bgPos[1],
-                            cw = iw-sx,
-                            ch = ih-sy;
-                        if (cx + iw > this.width) cw = this.width - cx;
-                        if (cy + ih > this.height) ch = this.height - cy;
 
-                        this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), cx, cy, cw, ch);
+                    if (this.backgroundRepeat == 'no-repeat') {
+                        this.ctx.beginPath();
+                        this.ctx.rect(0, 0, this.width, this.height);
+                        this.ctx.closePath();
+                        this.ctx.clip();
+                        this.ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, bgPos[0], bgPos[1], imgEl.width, imgEl.height);
 
                     } else if (this.backgroundRepeat == 'repeat-x') {
+ 
                         var col = Math.ceil(this.width/iw) + 1,
                             row = 1,
                             fixX = bgPos[0]%iw;
-
                         if (fixX > 0) fixX = fixX - iw;
-                        if (bgPos[1] < 0) sy = -bgPos[1];
-                        for (var c = 0; c < col; c ++) {
-                            var sx = c == 0 ? -fixX : 0,
-                                cx = c*iw+fixX,
-                                cy = bgPos[1] < 0 ? 0 : bgPos[1],
-                                cw = iw-sx,
-                                ch = ih-sy;
-                            if (cx + cw > this.width) {
-                                cw = this.width - cx;
-                            }
-                            if (cy + ch > this.height) {
-                                ch = this.height - cy;
-                            }
 
-                            this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), Math.max(cx, 0), cy, cw, ch);
-                    
-                        } 
+                        this.ctx.beginPath();
+                        this.ctx.rect(0, 0, this.width, this.height);
+                        this.ctx.closePath();
+                        this.ctx.clip();
+
+                        for (var c = 0; c < col; c ++) {
+                            this.ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, c*imgEl.width+fixX, bgPos[1], imgEl.width, imgEl.height);
+                        }
+
                     } else if (this.backgroundRepeat == 'repeat-y') {
 
                         var col = 1,
                             row = Math.ceil(this.height/ih) + 1,
                             fixY = bgPos[1]%ih;
-                        if (bgPos[0] < 0) sx = -bgPos[0];
                         if (fixY > 0) fixY = fixY - ih;
 
-                        for (var r = 0; r < row; r ++) {
-                            var sy = r == 0 ? -fixY : 0,
-                                cx = bgPos[0] < 0 ? 0 : bgPos[0],
-                                cy = r*ih+fixY,
-                                cw = iw-sx,
-                                ch = ih-sy;
-                            if (cx + cw > this.width) {
-                                cw = this.width - cx;
-                            }
-                            if (cy + ch > this.height) {
-                                ch = this.height - cy;
-                            }
+                        this.ctx.beginPath();
+                        this.ctx.rect(0, 0, this.width, this.height);
+                        this.ctx.closePath();
+                        this.ctx.clip();
 
-                            this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.01, ch), Math.max(cx, 0), Math.max(cy, 0), cw, ch);
+                        for (var r = 0; r < row; r ++) {
+                            this.ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, bgPos[0], r*ih+fixY, iw, ih);
                         }
-                        
 
                     } else if (this.backgroundRepeat == 'repeat') {
                         var col = Math.ceil(this.width/iw) + 1,
@@ -167,22 +141,14 @@ KISSY.add(function (S, Sprite) {
                         if (fixX > 0) fixX = fixX - iw;
                         if (fixY > 0) fixY = fixY - ih;
 
+                        this.ctx.beginPath();
+                        this.ctx.rect(0, 0, this.width, this.height);
+                        this.ctx.closePath();
+                        this.ctx.clip();
+
                         for (var c = 0; c < col; c ++) {
                             for (var r = 0; r < row; r ++) {
-                                var sx = c == 0 ? -fixX : 0,
-                                    sy = r == 0 ? -fixY : 0,
-                                    cx = c*iw+fixX,
-                                    cy = r*ih+fixY,
-                                    cw = iw-sx,
-                                    ch = ih-sy;
-                                if (cx + cw > this.width) {
-                                    cw = this.width - cx;
-                                }
-                                if (cy + ch > this.height) {
-                                    ch = this.height - cy;
-                                }
- 
-                                this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), Math.max(cx, 0), Math.max(cy, 0), cw, ch);
+                                this.ctx.drawImage(imgEl, 0, 0, iw, ih, c*iw+fixX, r*ih+fixY, iw, ih);
                             }
                         } 
                     }
