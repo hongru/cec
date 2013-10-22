@@ -4,10 +4,12 @@ KISSY.add(function (S, Sprite) {
 	var RectSprite = Sprite.extend({
 
 		initialize: function (options) {
-			this.supr(options);
+			
 			this.shape = 'rect';
             this._backgroundCanvas = document && document.createElement('canvas');
             this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+
+            this.supr(options);
 		},
         _checkImgs: function () {
             this.supr();
