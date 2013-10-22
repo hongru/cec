@@ -55,25 +55,31 @@ KISSY.add(function (S, Cobject) {
                 //one img url
                 this._imgLength = 1;
 
-                if (this.__cache__.images[this.backgroundImage]) {
-                    self._pushcheck(this.__cache__.images[this.backgroundImage]);
-                } else {
-                    var img = new Image();
-                    img.src = this.backgroundImage;
-                    img.onload = function () {
-                        self._pushcheck(img);
-                    }    
+                var src = this.backgroundImage,
+                    cacheImg = this.__cache__.images[src]; //console.log(cacheImg)
+                if (cacheImg) { //debugger;
+                    self.loadedImgs.push(cacheImg);
+                    self._checkImgs();
+                    return;
                 }
 
-                
+                var img = new Image();
+                img.src = src;
+                img.onload = function () {
+                    self.loadedImgs.push(img);
+                    self._checkImgs();
+                    self.__cache__.images[src] = img;
+                }
             } else if (this.backgroundImage && this.backgroundImage.nodeType == 1 && this.backgroundImage.nodeName == 'IMG') {
                 //one img el
                 this._imgLength = 1;
                 if (this.backgroundImage.width > 0 || this.backgroundImage.height > 0) {
-                    self._pushcheck(this.backgroundImage);
+                    self.loadedImgs.push(this.backgroundImage);
+                    self._checkImgs();
                 } else {
                     self.backgroundImage.onload = function () {
-                        self._pushcheck(self.backgroundImage);
+                        self.loadedImgs.push(self.backgroundImage);
+                        self._checkImgs();
                     }
                 }
 
@@ -82,11 +88,6 @@ KISSY.add(function (S, Cobject) {
                 this._imgLength = this.backgroundImage.length;
                 //todo ...
             }
-        },
-        _pushcheck: function (img) {
-            this.loadedImgs.push(img);
-            this.__cache__.images[img.src] = img;
-            this._checkImgs();
         },
         _checkImgs: function () {
             if (this.loadedImgs.length == this._imgLength) {

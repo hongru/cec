@@ -93,30 +93,97 @@ KISSY.add(function (S, Sprite) {
 
                 //rect sprite support image
                 if (this.shape == 'rect') {
+                    //this.ctx.drawImage(this.backgroundImageElement, sx, sy, iw-sx, ih-sy, bgPos[0] + fixPos, bgPos[1] + fixPos, iw, ih);
+                    //var pat = this.ctx.createPattern(this.backgroundImageElement, this.backgroundRepeat);
+                    //this.ctx.fillStyle = pat;
+                    //this.ctx.fillRect(bgPos[0] - 10, bgPos[1], this.width, this.height);
+                    if (this.backgroundRepeat == 'no-repeat') {
+                        if (bgPos[0] < 0) sx = -bgPos[0];
+                        if (bgPos[1] < 0) sy = -bgPos[1];
+                        var cx = bgPos[0] < 0 ? 0 : bgPos[0],
+                            cy = bgPos[1] < 0 ? 0 : bgPos[1],
+                            cw = iw-sx,
+                            ch = ih-sy;
+                        if (cx + iw > this.width) cw = this.width - cx;
+                        if (cy + ih > this.height) ch = this.height - cy;
 
-                    var repeatX = (this.backgroundRepeat == 'repeat' || this.backgroundRepeat == 'repeat-x'),
-                        repeatY = (this.backgroundRepeat == 'repeat' || this.backgroundRepeat == 'repeat-y');
-                    var col = repeatX ? Math.ceil(this.width/iw) + 1 : 1,
-                        row = repeatY ? Math.ceil(this.height/ih) + 1 : 1,
-                        fw = col * iw,
-                        fh = row * ih,
-                        fixX = repeatX ? bgPos[0]%iw : bgPos[0],
-                        fixY = repeatY ? bgPos[1]%ih : bgPos[1];
+                        this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), cx, cy, cw, ch);
 
-                    this.ctx.beginPath();
-                    this.ctx.rect(0, 0, this.width, this.height);
-                    this.ctx.closePath();
-                    this.ctx.clip();
+                    } else if (this.backgroundRepeat == 'repeat-x') {
+                        var col = Math.ceil(this.width/iw) + 1,
+                            row = 1,
+                            fixX = bgPos[0]%iw;
 
-                    this.ctx.save();
-                    var pat = this.ctx.createPattern(imgEl, this.backgroundRepeat);
-                    this.ctx.fillStyle = pat;
-                    if (fixX > 0 && repeatX) fixX = fixX - iw;
-                    if (fixY > 0 && repeatY) fixY = fixY - ih;
-                    this.ctx.translate(fixX, fixY)
-                    this.ctx.fillRect(0, 0, fw, fh);
-                    this.ctx.restore();
+                        if (fixX > 0) fixX = fixX - iw;
+                        if (bgPos[1] < 0) sy = -bgPos[1];
+                        for (var c = 0; c < col; c ++) {
+                            var sx = c == 0 ? -fixX : 0,
+                                cx = c*iw+fixX,
+                                cy = bgPos[1] < 0 ? 0 : bgPos[1],
+                                cw = iw-sx,
+                                ch = ih-sy;
+                            if (cx + cw > this.width) {
+                                cw = this.width - cx;
+                            }
+                            if (cy + ch > this.height) {
+                                ch = this.height - cy;
+                            }
+
+                            this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), Math.max(cx, 0), cy, cw, ch);
                     
+                        } 
+                    } else if (this.backgroundRepeat == 'repeat-y') {
+
+                        var col = 1,
+                            row = Math.ceil(this.height/ih) + 1,
+                            fixY = bgPos[1]%ih;
+                        if (bgPos[0] < 0) sx = -bgPos[0];
+                        if (fixY > 0) fixY = fixY - ih;
+
+                        for (var r = 0; r < row; r ++) {
+                            var sy = r == 0 ? -fixY : 0,
+                                cx = bgPos[0] < 0 ? 0 : bgPos[0],
+                                cy = r*ih+fixY,
+                                cw = iw-sx,
+                                ch = ih-sy;
+                            if (cx + cw > this.width) {
+                                cw = this.width - cx;
+                            }
+                            if (cy + ch > this.height) {
+                                ch = this.height - cy;
+                            }
+
+                            this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.01, ch), Math.max(cx, 0), Math.max(cy, 0), cw, ch);
+                        }
+                        
+
+                    } else if (this.backgroundRepeat == 'repeat') {
+                        var col = Math.ceil(this.width/iw) + 1,
+                            row = Math.ceil(this.height/ih) + 1,
+                            fixX = bgPos[0]%iw,
+                            fixY = bgPos[1]%ih;
+                        if (fixX > 0) fixX = fixX - iw;
+                        if (fixY > 0) fixY = fixY - ih;
+
+                        for (var c = 0; c < col; c ++) {
+                            for (var r = 0; r < row; r ++) {
+                                var sx = c == 0 ? -fixX : 0,
+                                    sy = r == 0 ? -fixY : 0,
+                                    cx = c*iw+fixX,
+                                    cy = r*ih+fixY,
+                                    cw = iw-sx,
+                                    ch = ih-sy;
+                                if (cx + cw > this.width) {
+                                    cw = this.width - cx;
+                                }
+                                if (cy + ch > this.height) {
+                                    ch = this.height - cy;
+                                }
+ 
+                                this.ctx.drawImage(imgEl, sx, sy, Math.max(0.1, cw), Math.max(0.1, ch), Math.max(cx, 0), Math.max(cy, 0), cw, ch);
+                            }
+                        } 
+                    }
                 }
             }
 		},
@@ -180,9 +247,12 @@ KISSY.add(function (S, Sprite) {
             var imgEl = this.backgroundImageElement,
                 imgWidth = imgEl.width,
                 imgHeight = imgEl.height;
-            this._backgroundCanvas.width = this.backgroundWidth;
-            this._backgroundCanvas.height = this.backgroundHeight;
-            this._backgroundCanvasCtx.drawImage(this.backgroundImageElement, 0, 0, imgWidth, imgHeight, 0, 0, this.backgroundWidth, this.backgroundHeight);
+            if (this._backgroundCanvas) {
+               this._backgroundCanvas.width = this.backgroundWidth;
+                this._backgroundCanvas.height = this.backgroundHeight;
+                this._backgroundCanvasCtx.drawImage(this.backgroundImageElement, 0, 0, imgWidth, imgHeight, 0, 0, this.backgroundWidth, this.backgroundHeight); 
+            }
+            
         }
 	});
 
