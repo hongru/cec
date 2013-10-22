@@ -4,6 +4,10 @@
 KISSY.add(function (S, Cobject) {
     
     var Sprite = Cobject.extend({
+        __cache__: {
+            images: {},
+            audio: {}
+        },
         _htmlevents: 'click,dblclick,mousedown,mousemove,mouseover,mouseout,mouseup,keydown,keypress,keyup,touchstart,touchend,touchcancel,touchleave,touchmove',
         initialize: function (options) {
             this.supr(options);
@@ -51,8 +55,8 @@ KISSY.add(function (S, Cobject) {
                 //one img url
                 this._imgLength = 1;
 
-                if (Sprite.cache.images[this.backgroundImage]) {
-                    self._pushcheck(Sprite.cache.images[this.backgroundImage]);
+                if (this.__cache__.images[this.backgroundImage]) {
+                    self._pushcheck(this.__cache__.images[this.backgroundImage]);
                 } else {
                     var img = new Image();
                     img.src = this.backgroundImage;
@@ -81,7 +85,7 @@ KISSY.add(function (S, Cobject) {
         },
         _pushcheck: function (img) {
             this.loadedImgs.push(img);
-            Sprite.cache.images[img.src] = img;
+            this.__cache__.images[img.src] = img;
             this._checkImgs();
         },
         _checkImgs: function () {
@@ -468,11 +472,6 @@ KISSY.add(function (S, Cobject) {
         } 
 
     });
-
-    Sprite.cache = {
-        images: {},
-        audio: {}
-    }
 
     return Sprite;
 
