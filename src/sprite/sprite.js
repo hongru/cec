@@ -51,22 +51,25 @@ KISSY.add(function (S, Cobject) {
                 //one img url
                 this._imgLength = 1;
 
-                var img = new Image();
-                img.src = this.backgroundImage;
-                img.onload = function () {
-                    self.loadedImgs.push(img);
-                    self._checkImgs();
+                if (Sprite.cache.images[this.backgroundImage]) {
+                    self._pushcheck(Sprite.cache.images[this.backgroundImage]);
+                } else {
+                    var img = new Image();
+                    img.src = this.backgroundImage;
+                    img.onload = function () {
+                        self._pushcheck(img);
+                    }    
                 }
+
+                
             } else if (this.backgroundImage && this.backgroundImage.nodeType == 1 && this.backgroundImage.nodeName == 'IMG') {
                 //one img el
                 this._imgLength = 1;
                 if (this.backgroundImage.width > 0 || this.backgroundImage.height > 0) {
-                    self.loadedImgs.push(this.backgroundImage);
-                    self._checkImgs();
+                    self._pushcheck(this.backgroundImage);
                 } else {
                     self.backgroundImage.onload = function () {
-                        self.loadedImgs.push(self.backgroundImage);
-                        self._checkImgs();
+                        self._pushcheck(self.backgroundImage);
                     }
                 }
 
@@ -75,6 +78,11 @@ KISSY.add(function (S, Cobject) {
                 this._imgLength = this.backgroundImage.length;
                 //todo ...
             }
+        },
+        _pushcheck: function (img) {
+            this.loadedImgs.push(img);
+            Sprite.cache.images[img.src] = img;
+            this._checkImgs();
         },
         _checkImgs: function () {
             if (this.loadedImgs.length == this._imgLength) {
@@ -460,6 +468,11 @@ KISSY.add(function (S, Cobject) {
         } 
 
     });
+
+    Sprite.cache = {
+        images: {},
+        audio: {}
+    }
 
     return Sprite;
 

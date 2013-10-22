@@ -41,24 +41,29 @@ canvas {
             width: 400,
             height: 300,
             backgroundImage: 'http://a.tbcdn.cn/s/kissy/logo.png',
-            backgroundRepeat: 'repeat-y',
+            backgroundRepeat: 'repeat-x',
             borderWidth: 1,
             borderColor: '#333',
             backgroundPosition: '50% 50%',
-            backgroundSize: '100% 100%'
+            backgroundSize: '40% auto'
         })
         .appendTo(stage)
         .on('render:before', function () {
-            this.setBackgroundPositionY('+1')//.setBackgroundPositionY('+1');
+            this.setBackgroundPositionX('+1')//.setBackgroundPositionY('+1');
             //backgroundSize 的改变 挺耗性能，尽量避免频繁改变
             //this.setBackgroundWidth('+1')
         });
 
-
+/*
         Ticker.singleton.on('tick', function (dt) {
             stage.clear();
             stage.render(dt);
         }); 
+*/
+setInterval(function () {
+    stage.clear();
+            stage.render();
+}, 1000);
 
         window.onerror = function () {
             setTimeout(function () {
