@@ -1,6 +1,15 @@
 /*global module:false*/
 module.exports = function (grunt) {
 
+    grunt.registerMultiTask('removeKissy', 'remove Kissy.', function() {
+        grunt.log.writeln(this.target + ': ' + JSON.stringify(this.data));
+
+        this.data.forEach(function (file) {
+            var code = grunt.file.read(file.src);
+            //console.log(code)
+        })
+    });
+
     // Project configuration.
     grunt.initConfig({
         // Metadata.
@@ -34,6 +43,20 @@ module.exports = function (grunt) {
             }
         },
 
+        removeKissy: {
+            options: {
+                exportsKey: 'cec/cec',
+                exportsName: 'CEC',
+            },
+            files: [
+                {
+                   src: './build/cec/cec.js',
+                    dest: './build/cec/cec-nokissy.js' 
+                }
+            ]
+            
+        }
+
         // watch: {
         //     less: {
         //         files: ['./src/mdh5/assets/less/*.less'],
@@ -50,5 +73,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-kmc');
 
     // Default task.
-    grunt.registerTask('default', [ 'kmc']);
+    grunt.registerTask('default', [ 'kmc', 'removeKissy']);
 };
