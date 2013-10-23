@@ -1,4 +1,0 @@
-Ticker
-====
-
-RAF & Ticker

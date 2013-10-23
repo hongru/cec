@@ -1,4 +1,0 @@
-FSM
-====
-
-Finite state machine

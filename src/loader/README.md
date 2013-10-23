@@ -1,4 +1,0 @@
-Loader
-====
-
-Resource Loader

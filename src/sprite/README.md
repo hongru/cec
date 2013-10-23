@@ -1,4 +1,0 @@
-Sprite
-====
-
-Interoperable Sprite & Layer

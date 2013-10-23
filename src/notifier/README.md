@@ -1,4 +1,0 @@
-Notifier
-====
-
-Custom Events - Notifier
