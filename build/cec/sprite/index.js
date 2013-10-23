@@ -717,7 +717,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
     return Sprite;
 
 }, {
-    requires: ['./cobject']
+    requires: ['cec/sprite/cobject']
 });
 //RectSprite
 KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
@@ -948,7 +948,7 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 	return RectSprite;
 
 }, {
-	requires: ['./sprite']
+	requires: ['cec/sprite/sprite']
 });
 //TextSprite
 KISSY.add('cec/sprite/textsprite',function (S, RectSprite) {
@@ -1165,7 +1165,7 @@ KISSY.add('cec/sprite/textsprite',function (S, RectSprite) {
     return TextSprite;
 
 }, {
-    requires: ['./rectsprite']
+    requires: ['cec/sprite/rectsprite']
 });
 //Frame Animation Sprite
 KISSY.add('cec/sprite/animsprite',function (S, RectSprite) {
@@ -1314,7 +1314,7 @@ KISSY.add('cec/sprite/animsprite',function (S, RectSprite) {
 	return AnimSprite;
 
 }, {
-	requires: ['./rectsprite']
+	requires: ['cec/sprite/rectsprite']
 })
 KISSY.add('cec/sprite/pathsprite',function (S, Sprite) {
 	
@@ -1369,7 +1369,7 @@ KISSY.add('cec/sprite/pathsprite',function (S, Sprite) {
 	return PathSprite;
 
 }, {
-	requires: ['./sprite']
+	requires: ['cec/sprite/sprite']
 })
 KISSY.add('cec/sprite/segmentsprite',function (S, PathSprite) {
     
@@ -1407,7 +1407,7 @@ KISSY.add('cec/sprite/segmentsprite',function (S, PathSprite) {
     return SegmentSprite;
 
 }, {
-    requires: ['./pathsprite']
+    requires: ['cec/sprite/pathsprite']
 })
 //Sprite index
 KISSY.add('cec/sprite/index',function (S, Poly, Rect, Anim, Path, Segment) {
@@ -1420,5 +1420,5 @@ KISSY.add('cec/sprite/index',function (S, Poly, Rect, Anim, Path, Segment) {
 
     return Sprite;
 }, {
-    requires: ['./sprite', './textsprite', './animsprite', './pathsprite', './segmentsprite']
+    requires: ['cec/sprite/sprite', 'cec/sprite/textsprite', 'cec/sprite/animsprite', 'cec/sprite/pathsprite', 'cec/sprite/segmentsprite']
 })

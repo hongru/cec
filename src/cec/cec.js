@@ -9,5 +9,5 @@ KISSY.add(function (S, Loader, Sprite, Ticker) {
     return CEC;
 
 }, {
-    requires: ['./loader/index', './sprite/index', './ticker/index'] 
+    requires: ['cec/loader/index', 'cec/sprite/index', 'cec/ticker/index'] 
 });
