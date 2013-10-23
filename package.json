@@ -1,0 +1,23 @@
+{
+    "name": "cec",
+    "version": "1.0.0",
+    "description": "Cross-End Canvas",
+    "main": "Gruntfile.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:hongru/cec.git"
+    },
+    "author": "hongru",
+    "license": "MIT",
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-uglify": "~0.2.2",
+        "grunt-contrib-watch": "~0.4.4",
+        "grunt-contrib-concat": "~0.3.0",
+        "grunt-kmc": "~0.1.0",
+        "grunt-contrib-copy": "~0.4.0"
+    }
+}
