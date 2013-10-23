@@ -1,7 +1,8 @@
 ejecta.include('kissy-nodejs.js');
+ejecta.include('cec.js');
 
-//kissy config
-var S = KISSY;
+//sprite group demo
+ejecta.include('./sprite_group/index.js');
 
-console.log(typeof 11);
-
+//sprite img demo
+//ejecta.include('./sprite_img/index.js');
