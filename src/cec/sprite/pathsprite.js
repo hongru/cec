@@ -51,5 +51,5 @@ KISSY.add(function (S, Sprite) {
 	return PathSprite;
 
 }, {
-	requires: ['./sprite']
+	requires: ['cec/sprite/sprite']
 })

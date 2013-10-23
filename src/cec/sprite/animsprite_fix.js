@@ -140,5 +140,5 @@ KISSY.add(function (S, RectSprite) {
 	return AnimSprite;
 
 }, {
-	requires: ['./rectsprite']
+	requires: ['cec/sprite/rectsprite']
 })

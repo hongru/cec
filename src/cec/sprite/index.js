@@ -9,5 +9,5 @@ KISSY.add(function (S, Poly, Rect, Anim, Path, Segment) {
 
     return Sprite;
 }, {
-    requires: ['./sprite', './textsprite', './animsprite', './pathsprite', './segmentsprite']
+    requires: ['cec/sprite/sprite', 'cec/sprite/textsprite', 'cec/sprite/animsprite', 'cec/sprite/pathsprite', 'cec/sprite/segmentsprite']
 })
