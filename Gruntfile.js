@@ -1,6 +1,60 @@
 /*global module:false*/
 module.exports = function (grunt) {
 
+    grunt.task.registerMultiTask('removeKissy', 'remove Kissy.', function() {
+        //grunt.log.writeln(this.target + ': ' + this.data);
+
+        var start = 
+        'var KISSY = {};\
+        KISSY.mods = {};\
+        KISSY.add = function (name, fn, cfg) {\
+            var requires = [];\
+            cfg && cfg.requires && cfg.requires.forEach(function (s) {\
+                if (/\\/$/.test(s)) s += "index";\
+                requires.push("mods[\'"+s+"\']");\
+            });\
+\
+            if (/\\/$/.test(name)) name += "index";\
+            KISSY.mods[name] = {\
+                name: name,\
+                fn: fn,\
+                requires: requires\
+            }\
+        };'
+        ;
+
+        var end = 
+        'module.exports = KISSY;';
+
+        var pre = 
+        '\n;(function () {\n\
+    \n\
+    var mods = {},\n\
+        KISSY;\n';
+
+        var last = '\n})();'
+
+
+        this.data.forEach(function (file) {
+            var code = grunt.file.read(file.src);
+            // console.log(code)
+            grunt.file.write(file.dest, start + code + end);
+            var KISSY = require(file.dest);
+            var codeArr = [];
+            for (var m in KISSY.mods) {
+                var mod = KISSY.mods[m];
+                var args = ['KISSY'].concat(mod['requires']).join(',');
+                var mCode = 'mods[\''+m+'\'] = ('+mod['fn'].toString()+')('+args+');';
+                codeArr.push(mCode);
+            }
+            pre = 'var '+file.exportsName+';\n' + pre;
+            last = '\n' + file.exportsName + ' = mods[\'' + file.exportsKey + '\']; \n' + last;
+            grunt.file.write(file.dest, pre + codeArr.join('\n') + last);
+
+        })
+    });
+
+
     // Project configuration.
     grunt.initConfig({
         // Metadata.
@@ -34,6 +88,17 @@ module.exports = function (grunt) {
             }
         },
 
+        removeKissy: {
+            files: [
+                {
+                    exportsKey: 'cec/cec',
+                    exportsName: 'CEC',
+                    src: './build/cec/cec.js',
+                    dest: './build/cec/cec-nokissy.js'
+                }
+            ]
+        }
+
         // watch: {
         //     less: {
         //         files: ['./src/mdh5/assets/less/*.less'],
@@ -50,5 +115,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-kmc');
 
     // Default task.
-    grunt.registerTask('default', [ 'kmc']);
+    grunt.registerTask('default', [ 'kmc', 'removeKissy']);
 };
