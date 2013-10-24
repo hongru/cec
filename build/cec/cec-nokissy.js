@@ -382,12 +382,20 @@ mods['cec/sprite/sprite'] = (function (S, Cobject) {
                     return;
                 }
 
-                var img = new Image();
-                img.src = src;
-                img.onload = function () {
+                function imgOnload () {
                     self.loadedImgs.push(img);
                     self._checkImgs();
                     self.__cache__.images[src] = img;
+                }
+                var img = new Image();
+                img.src = src;
+                img.onload = imgOnload;
+
+                // fix flashcanvas load image
+                if (typeof FlashCanvas != 'undefined') {
+                    img = {};
+                    img.src = src;
+                    imgOnload();
                 }
             } else if (this.backgroundImage && this.backgroundImage.nodeType == 1 && this.backgroundImage.nodeName == 'IMG') {
                 //one img el
