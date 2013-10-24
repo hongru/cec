@@ -1,9 +1,19 @@
 /*
 combined files : 
 
+cec/utils/prototypefix
 cec/klass
 
 */
+KISSY.add('cec/utils/prototypefix',function (S) {
+    if ( !Array.prototype.forEach ) {
+        Array.prototype.forEach = function(fn, scope) {
+            for(var i = 0, len = this.length; i < len; ++i) {
+            fn.call(scope || this, this[i], i, this);
+            }
+        }
+    }
+});
 //klass: a classical JS OOP façade
 
 KISSY.add('cec/klass',function (S) {
@@ -94,4 +104,6 @@ KISSY.add('cec/klass',function (S) {
 
     return klass;
 
+}, {
+    requires: ['cec/utils/prototypefix']
 });

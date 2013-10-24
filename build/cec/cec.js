@@ -1,6 +1,7 @@
 /*
 combined files : 
 
+cec/utils/prototypefix
 cec/klass
 cec/notifier/index
 cec/loader/index
@@ -16,6 +17,15 @@ cec/ticker/index
 cec/cec
 
 */
+KISSY.add('cec/utils/prototypefix',function (S) {
+    if ( !Array.prototype.forEach ) {
+        Array.prototype.forEach = function(fn, scope) {
+            for(var i = 0, len = this.length; i < len; ++i) {
+            fn.call(scope || this, this[i], i, this);
+            }
+        }
+    }
+});
 //klass: a classical JS OOP façade
 
 KISSY.add('cec/klass',function (S) {
@@ -106,6 +116,8 @@ KISSY.add('cec/klass',function (S) {
 
     return klass;
 
+}, {
+    requires: ['cec/utils/prototypefix']
 });
 KISSY.add('cec/notifier/index',function (S, Klass) {
     
@@ -262,7 +274,7 @@ KISSY.add('cec/sprite/cobject',function (S, Notifier) {
         scaleX: 1,
         scaleY: 1,
         angle: 0,
-        fillColor: null,
+        fillColor: 'rgba(0,0,0,0)',
         borderWidth: 0,
         borderColor: null,
         opacity: 1,
@@ -821,6 +833,9 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 			
 			this.shape = 'rect';
             this._backgroundCanvas = document && document.createElement('canvas');
+            if (typeof FlashCanvas != "undefined") {
+                FlashCanvas.initElement(this._backgroundCanvas);
+            }
             this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
 
             this.supr(options);
@@ -899,8 +914,7 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = this._backgroundCanvas || this.backgroundImageElement,
-                    //imgEl = this.backgroundImageElement,
+                    imgEl = FlashCanvas ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;

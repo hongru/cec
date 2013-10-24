@@ -7,6 +7,9 @@ KISSY.add(function (S, Sprite) {
 			
 			this.shape = 'rect';
             this._backgroundCanvas = document && document.createElement('canvas');
+            if (typeof FlashCanvas != "undefined") {
+                FlashCanvas.initElement(this._backgroundCanvas);
+            }
             this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
 
             this.supr(options);
@@ -85,8 +88,7 @@ KISSY.add(function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = this._backgroundCanvas || this.backgroundImageElement,
-                    //imgEl = this.backgroundImageElement,
+                    imgEl = FlashCanvas ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;

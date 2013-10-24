@@ -88,4 +88,6 @@ KISSY.add(function (S) {
 
     return klass;
 
+}, {
+    requires: ['cec/utils/prototypefix']
 });

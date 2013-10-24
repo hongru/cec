@@ -4,6 +4,15 @@ var CEC;
     
     var mods = {},
         KISSY;
+mods['cec/utils/prototypefix'] = (function (S) {
+    if ( !Array.prototype.forEach ) {
+        Array.prototype.forEach = function(fn, scope) {
+            for(var i = 0, len = this.length; i < len; ++i) {
+            fn.call(scope || this, this[i], i, this);
+            }
+        }
+    }
+})(KISSY);
 mods['cec/klass'] = (function (S) {
 
     var context = S || this,
@@ -92,7 +101,7 @@ mods['cec/klass'] = (function (S) {
 
     return klass;
 
-})(KISSY);
+})(KISSY,mods['cec/utils/prototypefix']);
 mods['cec/notifier/index'] = (function (S, Klass) {
     
     var Notifier = Klass({
@@ -244,7 +253,7 @@ mods['cec/sprite/cobject'] = (function (S, Notifier) {
         scaleX: 1,
         scaleY: 1,
         angle: 0,
-        fillColor: null,
+        fillColor: 'rgba(0,0,0,0)',
         borderWidth: 0,
         borderColor: null,
         opacity: 1,
@@ -795,6 +804,9 @@ mods['cec/sprite/rectsprite'] = (function (S, Sprite) {
 			
 			this.shape = 'rect';
             this._backgroundCanvas = document && document.createElement('canvas');
+            if (typeof FlashCanvas != "undefined") {
+                FlashCanvas.initElement(this._backgroundCanvas);
+            }
             this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
 
             this.supr(options);
@@ -873,8 +885,7 @@ mods['cec/sprite/rectsprite'] = (function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = this._backgroundCanvas || this.backgroundImageElement,
-                    //imgEl = this.backgroundImageElement,
+                    imgEl = FlashCanvas ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;
