@@ -7,7 +7,7 @@ KISSY.add(function (S, Notifier) {
         scaleX: 1,
         scaleY: 1,
         angle: 0,
-        fillColor: null,
+        fillColor: 'rgba(0,0,0,0)',
         borderWidth: 0,
         borderColor: null,
         opacity: 1,

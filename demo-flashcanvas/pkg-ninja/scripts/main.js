@@ -5,6 +5,13 @@
  * @site http://ucren.com
  */
 
+if (Element && Element.prototype) {
+    if (!Element.prototype.addEventListener) {
+        Element.prototype.addEventListener = function () {
+        }
+    }
+}
+ 
 void function( global ){
 	var oRequire, mapping = {}, cache = {}, extRegx = /\.js$/;
 

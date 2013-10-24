@@ -477,5 +477,5 @@ KISSY.add(function (S, Cobject) {
     return Sprite;
 
 }, {
-    requires: ['./cobject']
+    requires: ['cec/sprite/cobject']
 });

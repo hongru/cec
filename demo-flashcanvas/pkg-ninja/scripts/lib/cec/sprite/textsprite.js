@@ -213,5 +213,5 @@ KISSY.add(function (S, RectSprite) {
     return TextSprite;
 
 }, {
-    requires: ['./rectsprite']
+    requires: ['cec/sprite/rectsprite']
 });
