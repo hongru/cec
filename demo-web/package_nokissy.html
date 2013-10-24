@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<style>
+body {margin:0;}
+canvas {
+    display: block;
+    background: #333;
+    margin: 0 auto;
+}
+</style>
+
+<script type="text/javascript" src="../build/cec/cec-nokissy.js"></script>
+</head>
+
+<body>
+<canvas id="canvas" width="962" height="641"></canvas>
+
+<script>
+
+        var Ticker = CEC.Ticker,
+            RectSprite = CEC.Sprite.Rect,
+            AnimSprite = CEC.Sprite.Anim;
+
+        var stage = new RectSprite('canvas');
+
+        var bg1 = new RectSprite({
+            x: 0,
+            y: 0,
+            width: 962,
+            height: 171,
+            backgroundImage: './images/package/pkg_01.jpg',
+            backgroundRepeat: 'no-repeat'
+        }).appendTo(stage);
+
+        var bg2 = new RectSprite({
+            x: 0,
+            y: 435,
+            width: 962,
+            height: 205,
+            backgroundImage: './images/package/pkg_05.png',
+            backgroundRepeat: 'no-repeat'
+        }).appendTo(stage);
+
+        var repeat = new RectSprite({
+            x: 0,
+            y: 171,
+            width: 962,
+            height: 265,
+            backgroundImage: './images/package/repeat.png',
+            backgroundRepeat: 'repeat-x',
+            backgroundSize: 'auto 100%'
+        }).appendTo(stage)
+        .on('render:before', function (dt) {
+            this.setBackgroundPositionX('-5');
+        });
+
+        var pkgCont = new RectSprite({
+            x: 0,
+            y: 170,
+            width: 962,
+            height: 250
+        }).appendTo(stage);
+
+        function addPkgs (x) {
+            x = x || 1000;
+            var pkg = new AnimSprite({
+                name: 'package',
+                x: x,
+                y: 0,
+                width: 300,
+                height: 250,
+                backgroundImage: './images/package/4.png',
+                // animConfig  如果包涵imgWidth, imgHeight 字段，不配置frameData的话,会自动依据图片高宽　和　帧排列方向生成frame 数据
+                animConfig: {
+                    autoPlay: false,
+                    frameNum: 4,
+                    frameRate: 8,
+                    loop: false,
+                    imgWidth: 2002,
+                    imgHeight: 502,
+                    arrangeDir: 'h'
+                }
+
+            }).appendTo(pkgCont)
+            .on('render:before', function (dt) {
+                this.setX('-5');
+            });
+        }
+        
+        function checkPkgs () {
+            for (var i = 0; i < pkgCont.children.length; i ++) {
+                var o = pkgCont.children[i];
+                o.x < -300 && o.remove();
+            }
+            if (pkgCont.children.length < 4) {
+                var n = 4 - pkgCont.children.length;
+                for (var i = 0; i < n; i ++) {
+                    addPkgs(pkgCont.children[pkgCont.children.length-1].x + 350);
+                }
+            }
+        }
+
+        addPkgs();
+
+        stage.delegate('click', function (e) {
+            if (e.targetSprite.name == 'package') {
+                e.targetSprite.play();
+            }
+        }).delegate('touchstart', function (e) {
+            if (e.targetSprite.name == 'package') {
+                e.targetSprite.play();
+            }
+        });
+
+        Ticker.singleton.on('tick', function (dt) {
+            stage.clear();
+            checkPkgs();
+            stage.render(dt);
+        }); 
+
+
+    document.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+    }, false)
+
+</script>
+</body>
+</html>
