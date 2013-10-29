@@ -76,8 +76,8 @@ KISSY.add(function (S, Cobject) {
                     self.__cache__.images[src] = img;
                 }
                 var img = new Image();
-                img.src = src;
                 img.onload = imgOnload;
+                img.src = src;
 
                 // fix flashcanvas load image
                 // if (typeof FlashCanvas != 'undefined') {

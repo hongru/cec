@@ -14,7 +14,11 @@ KISSY.add(function (S, Sprite) {
                 this._backgroundCanvas.style.top = 0;
                 //document.body.appendChild(this._backgroundCanvas);
             }
-            this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+
+            if (this._backgroundCanvas.getContext) {
+                this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+            }
+            
 
             this.supr(options);
 		},

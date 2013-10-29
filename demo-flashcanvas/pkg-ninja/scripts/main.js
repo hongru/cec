@@ -4290,7 +4290,7 @@ define("scripts/main.js", function(exports,module){
 	  var resources, pm = new promise;
 	  
 	  resources = [
-            "images/crawler.png",
+          "images/crawler.png",
 	      "images/star.png",
           
 	      "images/box-h-normal.png",
@@ -4300,7 +4300,7 @@ define("scripts/main.js", function(exports,module){
 	      "images/box-v-strip.png",
 	      
 	      "images/box-h-open.png",
-	      "images/box-v-open.png"
+	      "images/box-v-open.png" 
 	
 	      
 	  ];
@@ -4337,6 +4337,7 @@ define("scripts/main.js", function(exports,module){
 	  CEC.ready( function(){
 	    stage = Stage.create( { canvas: "canvas" } );
 	    renderTimeline.createTask( { duration: -1, object: stage, onTimeUpdate: function () {stage.render();} } );
+        //stage.render();
 	
 	    Component.init( { stage: stage } );
 	    Interaction.init( { canvas: canvas } );

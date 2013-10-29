@@ -193,7 +193,7 @@ KISSY.add('cec/loader/index',function (S, Notifier) {
 			tryTime > 1 && console.log('retry: ' + src);
 
 			var img = new Image();
-			img.src = src;
+			
 			img.originalSrc = src;
 			img.tryTime = tryTime;
 			img.onload = function () {
@@ -212,6 +212,8 @@ KISSY.add('cec/loader/index',function (S, Notifier) {
 			img._timer = setTimeout(function () {
 				me._tryLoadImg(img);
 			}, (timeout[tryTime - 1] || 5000));
+
+			img.src = src;
 		},
 		/**
 		 * [load description]

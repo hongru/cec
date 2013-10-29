@@ -308,7 +308,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                 //hack flashcanvas
                 if (hasFC) {
                     //console.log(this.backgroundImage)
-                    this.backgroundImage += /\?/.test(this.backgroundImage) ? ('&t=' + Math.random()) : ('?t='+Math.random());
+                    //this.backgroundImage += /\?/.test(this.backgroundImage) ? ('&t=' + Math.random()) : ('?t='+Math.random());
                 }
 
                 //one img url
@@ -328,8 +328,8 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                     self.__cache__.images[src] = img;
                 }
                 var img = new Image();
-                img.src = src;
                 img.onload = imgOnload;
+                img.src = src;
 
                 // fix flashcanvas load image
                 // if (typeof FlashCanvas != 'undefined') {
@@ -762,7 +762,11 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
                 this._backgroundCanvas.style.top = 0;
                 //document.body.appendChild(this._backgroundCanvas);
             }
-            this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+
+            if (this._backgroundCanvas.getContext) {
+                this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+            }
+            
 
             this.supr(options);
 		},
