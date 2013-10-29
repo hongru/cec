@@ -9,8 +9,14 @@ KISSY.add(function (S, Sprite) {
             this._backgroundCanvas = document && document.createElement('canvas');
             if (typeof FlashCanvas != "undefined") {
                 FlashCanvas.initElement(this._backgroundCanvas);
+                this._backgroundCanvas.style.position = 'absolute';
+                this._backgroundCanvas.style.left = 0;
+                this._backgroundCanvas.style.top = 0;
+                //document.body.appendChild(this._backgroundCanvas);
             }
-            this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+            if (this._backgroundCanvas.getContext) {
+                this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+            }
 
             this.supr(options);
 		},
@@ -88,7 +94,8 @@ KISSY.add(function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = FlashCanvas ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    imgEl = typeof FlashCanvas != 'undefined' ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    //imgEl = (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;
@@ -101,11 +108,17 @@ KISSY.add(function (S, Sprite) {
                         this.ctx.rect(0, 0, this.width, this.height);
                         this.ctx.closePath();
                         this.ctx.clip();
-                        this.ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, bgPos[0], bgPos[1], imgEl.width, imgEl.height);
+                        
+                        if (typeof FlashCanvas != 'undefined') {
+                            this.ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, bgPos[0], bgPos[1], this.width, this.height);
+                        } else {
+                            this.ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, bgPos[0], bgPos[1], imgEl.width, imgEl.height);
+                        }
+                        
 
                     } else if (this.backgroundRepeat == 'repeat-x') {
  
-                        var col = Math.ceil(this.width/iw) + 1,
+                         var col = Math.ceil(this.width/iw) + 1,
                             row = 1,
                             fixX = bgPos[0]%iw;
                         if (fixX > 0) fixX = fixX - iw;
@@ -117,7 +130,7 @@ KISSY.add(function (S, Sprite) {
 
                         for (var c = 0; c < col; c ++) {
                             this.ctx.drawImage(imgEl, 0, 0, imgEl.width, imgEl.height, c*imgEl.width+fixX, bgPos[1], imgEl.width, imgEl.height);
-                        }
+                        } 
 
                     } else if (this.backgroundRepeat == 'repeat-y') {
 
@@ -217,7 +230,7 @@ KISSY.add(function (S, Sprite) {
             var imgEl = this.backgroundImageElement,
                 imgWidth = imgEl.width,
                 imgHeight = imgEl.height;
-            if (this._backgroundCanvas) {
+            if (this._backgroundCanvas && this._backgroundCanvasCtx) {
                this._backgroundCanvas.width = this.backgroundWidth;
                 this._backgroundCanvas.height = this.backgroundHeight;
                 this._backgroundCanvasCtx.drawImage(this.backgroundImageElement, 0, 0, imgWidth, imgHeight, 0, 0, this.backgroundWidth, this.backgroundHeight); 

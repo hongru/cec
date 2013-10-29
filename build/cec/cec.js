@@ -395,8 +395,15 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
             }
         },
         _dealImgs: function () {
-            var self = this;
+            var self = this,
+                hasFC = typeof FlashCanvas != 'undefined';
             if (typeof this.backgroundImage == 'string') {
+                //hack flashcanvas
+                if (hasFC) {
+                    //console.log(this.backgroundImage)
+                    this.backgroundImage += /\?/.test(this.backgroundImage) ? ('&t=' + Math.random()) : ('?t='+Math.random());
+                }
+
                 //one img url
                 this._imgLength = 1;
 
@@ -418,11 +425,11 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                 img.onload = imgOnload;
 
                 // fix flashcanvas load image
-                if (typeof FlashCanvas != 'undefined') {
-                    img = {};
-                    img.src = src;
-                    imgOnload();
-                }
+                // if (typeof FlashCanvas != 'undefined') {
+                //     img = {};
+                //     img.src = src;
+                //     imgOnload();
+                // }
             } else if (this.backgroundImage && this.backgroundImage.nodeType == 1 && this.backgroundImage.nodeName == 'IMG') {
                 //one img el
                 this._imgLength = 1;
@@ -843,6 +850,10 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
             this._backgroundCanvas = document && document.createElement('canvas');
             if (typeof FlashCanvas != "undefined") {
                 FlashCanvas.initElement(this._backgroundCanvas);
+                this._backgroundCanvas.style.position = 'absolute';
+                this._backgroundCanvas.style.left = 0;
+                this._backgroundCanvas.style.top = 0;
+                //document.body.appendChild(this._backgroundCanvas);
             }
             this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
 
@@ -922,7 +933,8 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = FlashCanvas ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    imgEl = typeof FlashCanvas != 'undefined' ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    //imgEl = (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;
@@ -1091,6 +1103,13 @@ KISSY.add('cec/sprite/textsprite',function (S, RectSprite) {
             this.supr(options);
 
             this._textCanvas = document.createElement('canvas');
+            if (typeof FlashCanvas != "undefined") {
+                FlashCanvas.initElement(this._textCanvas);
+                this._textCanvas.style.position = 'absolute';
+                this._textCanvas.style.left = 0;
+                this._textCanvas.style.top = 0;
+                //document.body.appendChild(this._textCanvas);
+            }
             this._textCtx = this._textCanvas.getContext('2d');
             this._updateTextCanvas();
         },

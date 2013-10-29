@@ -5,12 +5,6 @@
  * @site http://ucren.com
  */
 
-if (Element && Element.prototype) {
-    if (!Element.prototype.addEventListener) {
-        Element.prototype.addEventListener = function () {
-        }
-    }
-}
  
 void function( global ){
 	var oRequire, mapping = {}, cache = {}, extRegx = /\.js$/;
@@ -1468,7 +1462,7 @@ define("scripts/timeline.js", function(exports,module){
 	  var me = this;
 	
 	  if( me.inited )
-	      return ;
+	      return me;
 	  else
 	    me.inited = 1;
 	
@@ -1711,7 +1705,8 @@ define("scripts/lib/cec-all.js", function(exports,module){
 	    KISSY.use( "cec/sprite/sprite,cec/sprite/rectsprite,cec/sprite/animsprite,cec/sprite/pathsprite,cec/loader/", function( K, S, R, A, P, L ){
 	      exports.Sprite = S;
 	      exports.RectSprite = R;
-	      exports.AnimSprite = A;
+	      exports.AnimSprite = A;               
+                
 	      exports.PathSprite = P;
 	      exports.Loader = L;
 	      L.belongto( S );
@@ -2096,7 +2091,7 @@ define("scripts/game/main.js", function(exports,module){
 	var state = require("scripts/state");
 	var timeline = require("scripts/timeline").use( "canvas-render" );
 	var message = require("scripts/message");
-	var Sound = require("scripts/game/sound");
+	//var Sound = require("scripts/game/sound");
 	
 	// components
 	var background = require("scripts/components/background");
@@ -2144,21 +2139,23 @@ define("scripts/game/main.js", function(exports,module){
 	      //   document.title = timeline.getFPS();
 	      // }, 200 );
 	
-	      Sound.play( "background" );
+	      //Sound.play( "background" );
 	    },
 	
 	    start: function(){
 	      var x, lastTime = 0, frame = 0, f;
 	
 	      boxes.createOne( 0 );
-	
+    
+     
 	      movingTimer = timeline.createTask( {
 	        start: 0, duration: -1, object: this,
-	        onTimeUpdate: function( time ){
-	          x = - speed * ( time - lastTime ) / 1000;
+	        onTimeUpdate: function( time ){ 
+	           x = - speed * ( time - lastTime ) / 1000;
+             
 	          boxes.moveLeft( x );
 	          crawler.moveLeft( x );
-	          lastTime = time;
+	          lastTime = time; 
 	          // boxes.shake2( time );
 	        }
 	      } );
@@ -3507,7 +3504,7 @@ define("scripts/components/boxes.js", function(exports,module){
 	var message = require("scripts/message");
 	var collide = require("scripts/game/collide");
 	var tools = require("scripts/game/tools");
-	var Sound = require("scripts/game/sound");
+	//var Sound = require("scripts/game/sound");
 	var tween = require("scripts/lib/tween");
 	var quadratic = tween.quadratic.cio;
 	var elastic = tween.elastic.co;
@@ -3525,12 +3522,12 @@ define("scripts/components/boxes.js", function(exports,module){
 	  "strip": {
 	    h: { image: "images/box-h-strip.png" },
 	    v: { image: "images/box-v-strip.png" },
-	    "h-ad": { image: "images/box-ad-h-strip.png" },
+	    "h-ad": { image: "images/box-ad-h-strip.png" }
 	  },
 	  "open": {
 	    h: { image: "images/box-h-open.png" },
 	    v: { image: "images/box-v-open.png" },
-	    "h-ad": { image: "images/box-ad-h-open.png" },
+	    "h-ad": { image: "images/box-ad-h-open.png" }
 	  },
 	  "light": {
 	    h: {
@@ -3553,7 +3550,7 @@ define("scripts/components/boxes.js", function(exports,module){
 	      height: 8.5,
 	      x: 0,
 	      y: 75
-	    },
+	    }
 	  }
 	};
 	
@@ -3681,7 +3678,7 @@ define("scripts/components/boxes.js", function(exports,module){
 	
 	      this.boxes.splice( index, 1, newBox );
 	      this.removeElement( box );
-	      Sound.play( "cut" );
+	      //Sound.play( "cut" );
 	    }
 	  },
 	
@@ -4092,7 +4089,7 @@ define("scripts/interaction.js", function(exports,module){
 	  touchMove = isTouch ? "touchmove" : "mousemove";
 	  touchEnd = isTouch ? "touchend" : "mouseup";
 	
-	  el.addEventListener( touchStart, function( event ){
+	  /* el.addEventListener( touchStart, function( event ){
 	    if( isTouch )
 	      event = event.touches[ 0 ] || event;
 	    event = eventFormater( event );
@@ -4101,9 +4098,20 @@ define("scripts/interaction.js", function(exports,module){
 	    pointY = event.clientY;
 	    message.postMessage( "touch-start", pointX, pointY );
 	    message.postMessage( "touch-spot", pointX, pointY );
-	  }, false );
+	  }, false ); */
+      
+      Ucren.addEvent(el, touchStart, function( event ){
+	    if( isTouch )
+	      event = event.touches[ 0 ] || event;
+	    event = eventFormater( event );
+	    inSweeping = true;
+	    pointX = event.clientX;
+	    pointY = event.clientY;
+	    message.postMessage( "touch-start", pointX, pointY );
+	    message.postMessage( "touch-spot", pointX, pointY );
+	  });
 	
-	  el.addEventListener( touchMove, function( event ){
+	  /* el.addEventListener( touchMove, function( event ){
 	    var x, y;
 	    
 	    if( !inSweeping )
@@ -4123,9 +4131,31 @@ define("scripts/interaction.js", function(exports,module){
 	      message.postMessage( "touch-spot", x, y );
 	    }
 	
-	  }, false );
+	  }, false ); */
+      
+      Ucren.addEvent(el, touchMove, function( event ){
+	    var x, y;
+	    
+	    if( !inSweeping )
+	      return ;
 	
-	  el.addEventListener( touchEnd, function( event ){
+	    if( isTouch )
+	      event = event.touches[ 0 ] || event;
+	
+	    event = eventFormater( event );
+	
+	    x = event.clientX;
+	    y = event.clientY;
+	
+	    if( distance( x, y, pointX, pointY ) > 6 ){
+	      pointX = x;
+	      pointY = y;
+	      message.postMessage( "touch-spot", x, y );
+	    }
+	
+	  });
+	
+	  /* el.addEventListener( touchEnd, function( event ){
 	    var x, y;
 	    if( isTouch )
 	      event = event.touches[ 0 ] || event;
@@ -4135,7 +4165,19 @@ define("scripts/interaction.js", function(exports,module){
 	    x = event.clientX;
 	    y = event.clientY;
 	    message.postMessage( "touch-end", x, y );
-	  }, false );
+	  }, false ); */
+      
+      Ucren.addEvent(el, touchEnd, function( event ){
+	    var x, y;
+	    if( isTouch )
+	      event = event.touches[ 0 ] || event;
+	
+	    event = eventFormater( event );
+	    inSweeping = false;
+	    x = event.clientX;
+	    y = event.clientY;
+	    message.postMessage( "touch-end", x, y );
+	  });
 	};
 	
 	exports.setEventFormater = function( formater ){
@@ -4208,14 +4250,14 @@ define("scripts/device.js", function(exports,module){
 	    Interaction.setEventFormater( defaultEventFormater );
 	  };
 	
-	  window.addEventListener( "orientationchange", function( f ){
+	  /* window.addEventListener( "orientationchange", function( f ){
 	    return ( f = function(){
 	      if( de.clientWidth < de.clientHeight )
 	        doRotate();  
 	      else
 	        restore();
 	    } )(), f;
-	  }() );
+	  }() ); */
 	};;
 
 	return exports;
@@ -4235,7 +4277,8 @@ define("scripts/main.js", function(exports,module){
 	var CEC = require("scripts/lib/cec-all");
 	var Stage = require("scripts/adapter/stage/index");
 	var Game = require("scripts/game/main");
-	var renderTimeline = require("scripts/timeline").use( "canvas-render" ).init( 16 );
+	var renderTimeline = require("scripts/timeline").use('canvas-render').init(16);
+    console.log(require("scripts/timeline").use('canvas-render').init)
 	var Interaction = require("scripts/interaction");
 	var Component = require("scripts/component");
 	var promise = require("scripts/lib/promise");
@@ -4247,6 +4290,9 @@ define("scripts/main.js", function(exports,module){
 	  var resources, pm = new promise;
 	  
 	  resources = [
+            "images/crawler.png",
+	      "images/star.png",
+          
 	      "images/box-h-normal.png",
 	      "images/box-v-normal.png",
 	      
@@ -4254,10 +4300,9 @@ define("scripts/main.js", function(exports,module){
 	      "images/box-v-strip.png",
 	      
 	      "images/box-h-open.png",
-	      "images/box-v-open.png",
+	      "images/box-v-open.png"
 	
-	      "images/crawler.png",
-	      "images/star.png"
+	      
 	  ];
 	
 	  new CEC.Loader( resources, function( process, img ){
@@ -4291,7 +4336,7 @@ define("scripts/main.js", function(exports,module){
 	
 	  CEC.ready( function(){
 	    stage = Stage.create( { canvas: "canvas" } );
-	    renderTimeline.createTask( { duration: -1, object: stage, onTimeUpdate: stage.render } );
+	    renderTimeline.createTask( { duration: -1, object: stage, onTimeUpdate: function () {stage.render();} } );
 	
 	    Component.init( { stage: stage } );
 	    Interaction.init( { canvas: canvas } );
@@ -4301,9 +4346,9 @@ define("scripts/main.js", function(exports,module){
 	  }.bind( this ) );
 	
 	  // TODO: 如果在网页环境
-	  document.addEventListener( "touchmove", function( event ){
+	  /* document.addEventListener( "touchmove", function( event ){
 	    event.preventDefault();
-	  } );
+	  } ); */
 	};;
 
 	return exports;

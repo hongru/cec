@@ -36,7 +36,7 @@ canvas {
     }
 
     S.use('cec/ticker/,cec/sprite/sprite', function (S, Ticker, Sprite) {
-        var stage = new Sprite('canvas');
+        var stage = new Sprite('canvas').setFillColor('rgba(255,255,255,0.1)');
 
         var container = new Sprite({
             x: 400,
@@ -77,7 +77,7 @@ canvas {
         }).appendTo(a);
 
         Ticker.singleton.on('tick', function (dt) {
-            stage.clear();
+            //stage.clear();
             container.rotate('+1');
             container2.rotate('-1');
             a.rotate('-0.5');
