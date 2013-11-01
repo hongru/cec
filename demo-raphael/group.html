@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+
+<script src="../build/cec/cec-nokissy.js"></script>
+
+<script src="../src/cec/raphael/raphael.1.5.2.js"></script>
+<script src="../src/cec/raphael/cec.cobject.js"></script>
+<script src="../src/cec/raphael/cec.sprite.js"></script>
+<style>
+#canvas {
+    display: block;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+
+    width: 800px;
+    height: 600px;
+}
+</style>
+</head>
+
+<body>
+<div id="canvas" width="800" height="600"></div>
+
+<script type="text/javascript">
+    var Ticker = CEC.Ticker,
+        Sprite = CEC.Sprite;
+
+        var stage = new Sprite('canvas');
+
+        var container = new Sprite({
+            x: 400,
+            y: 300,
+            width: 200,
+            height: 200
+        }).setFillColor('#aaa').appendTo(stage);
+
+        for (var i = 0; i < 10; i ++) {
+            var rect = new Sprite({
+                x: (Math.random()*container.width),
+                y: (Math.random()*container.height),
+                width: 20,
+                height: 20
+            }).setFillColor('#ff4a00').appendTo(container);
+        }
+
+        var container2 = new Sprite({
+            x: 100,
+            y: 100,
+            width: 100,
+            height: 100,
+            fillColor: '#ccc'
+        }).appendTo(stage);
+        var a = new Sprite({
+            x: 0,
+            y: 0,
+            width: 80,
+            height: 80,
+            fillColor: '#f40'
+        }).appendTo(container2);
+        var b = new Sprite({
+            x: 0,
+            y: 0,
+            width: 40,
+            height: 40,
+            fillColor: '#333'
+        }).appendTo(a);
+
+
+        Ticker.singleton.on('tick', function (dt) {
+            //stage.clear();
+
+            container2.rotate('-1');
+            
+            container.translate('+1', '+0').rotate('+1');
+        }); 
+
+</script>
+</body>
+</html>

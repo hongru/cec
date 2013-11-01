@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+
+<script src="../build/cec/cec-nokissy.js"></script>
+
+<script src="../src/cec/raphael/raphael.1.5.2.js"></script>
+<script src="../src/cec/raphael/cec.cobject.js"></script>
+<script src="../src/cec/raphael/cec.sprite.js"></script>
+<script src="../src/cec/raphael/cec.sprite.anim.js"></script>
+<style>
+#canvas {
+    display: block;
+    border: 1px solid #ccc;
+    margin: 0 auto;
+
+    width: 800px;
+    height: 600px;
+}
+</style>
+</head>
+
+<body>
+<canvas id="canvas" width="800" height="600"></canvas>
+
+<script type="text/javascript">
+    var Ticker = CEC.Ticker,
+        Sprite = CEC.Sprite,
+        FrameSprite = CEC.Sprite.Anim;
+
+        var stage = new Sprite('canvas');
+
+        var container = new FrameSprite({
+            x: 400,
+            y: 300,
+            width: 300,
+            height: 200,
+            backgroundImage: '../demo-web/images/package/2.png',
+            animConfig: {
+                autoPlay: true,
+                loop: true,
+                frameNum: 4,
+                frameRate: 10,
+                imgWidth: 2402,
+                imgHeight: 502
+            }
+        }).setFillColor('#333').appendTo(stage)
+
+
+        Ticker.singleton.on('tick', function (dt) {
+            // body...
+            x = container.x - 1;
+            container.setX(x);
+        })
+
+        
+
+</script>
+</body>
+</html>

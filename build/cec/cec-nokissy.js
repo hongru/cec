@@ -1527,7 +1527,7 @@ mods['cec/ticker/index'] = (function (S, Notifier) {
              window.oRequestAnimationFrame ||
              window.msRequestAnimationFrame ||
              function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-               window.setTimeout(callback, 1000/60);
+                setTimeout(callback, 1000/60);
              };
     })();
 
@@ -1571,16 +1571,17 @@ mods['cec/ticker/index'] = (function (S, Notifier) {
     return Ticker;
 
 })(KISSY,mods['cec/notifier/index']);
-mods['cec/cec'] = (function (S, Loader, Sprite, Ticker) {
+mods['cec/cec'] = (function (S, Loader, Sprite, Ticker, Notifier) {
     
     var CEC = {};
     CEC.Loader = Loader;
     CEC.Sprite = Sprite;
     CEC.Ticker = Ticker;
+    CEC.Notifier = Notifier;
 
     return CEC;
 
-})(KISSY,mods['cec/loader/index'],mods['cec/sprite/index'],mods['cec/ticker/index']);
+})(KISSY,mods['cec/loader/index'],mods['cec/sprite/index'],mods['cec/ticker/index'],mods['cec/notifier/index']);
 CEC = mods['cec/cec']; 
 
 })();

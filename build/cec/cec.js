@@ -1571,7 +1571,7 @@ KISSY.add('cec/ticker/index',function (S, Notifier) {
              window.oRequestAnimationFrame ||
              window.msRequestAnimationFrame ||
              function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-               window.setTimeout(callback, 1000/60);
+                setTimeout(callback, 1000/60);
              };
     })();
 
@@ -1618,15 +1618,16 @@ KISSY.add('cec/ticker/index',function (S, Notifier) {
     requires: ['cec/notifier/']
 });
 //CEC index
-KISSY.add('cec/cec',function (S, Loader, Sprite, Ticker) {
+KISSY.add('cec/cec',function (S, Loader, Sprite, Ticker, Notifier) {
     
     var CEC = {};
     CEC.Loader = Loader;
     CEC.Sprite = Sprite;
     CEC.Ticker = Ticker;
+    CEC.Notifier = Notifier;
 
     return CEC;
 
 }, {
-    requires: ['cec/loader/index', 'cec/sprite/index', 'cec/ticker/index'] 
+    requires: ['cec/loader/index', 'cec/sprite/index', 'cec/ticker/index', 'cec/notifier/index'] 
 });
