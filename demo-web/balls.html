@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/> <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1" media="(device-height: 568px)"/>
+<style>
+.doc {
+    width: 320px;
+    margin: 0 auto;
+    background: #f5f5f5;
+}
+body {margin: 0;
+    background: #333;
+}
+canvas {
+    width: 100%;
+    display: block;;
+}
+</style>
+<script src="../build/cec/cec-nokissy.js"></script>
+</head>
+
+<body>
+<div class="doc">
+    <canvas id="canvas" width="320" height="300"></canvas>
+</div>
+
+<script>
+    var g = 100;
+
+    var cvs = function () {
+        var canvas = document.getElementById('canvas'),
+            ctx = canvas.getContext('2d');
+
+        function clear () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        return {
+            canvas: canvas,
+            ctx: ctx,
+            clear: clear
+        }
+    }();
+
+    var collection = function () {
+        var coll = []; 
+
+        function contact(A, B, dt) {
+            var dis = Math.sqrt(Math.pow(A.ballPos[0]- B.ballPos[0], 2) + Math.pow(A.ballPos[1] - B.ballPos[1], 2));
+            if (dis < A.ballRadius + B.ballRadius) {
+                A.ballPos[0] = B.ballPos[0] - B.ballRadius - A.ballRadius;
+                B.ballPos[0] = A.ballPos[0] + A.ballRadius + B.ballRadius;
+
+                var tmp = A.v;
+                A.v = B.v;
+                B.v = tmp;
+                A.update(dt);
+            } else {
+                A.update(dt);
+            }
+        }
+
+        function update (dt) {
+
+            if (coll.length > 1) {
+                for (var i = 0; i < coll.length - 1; i ++) {
+                    var A = coll[i],
+                        B = coll[i + 1];
+                    contact(A, B, dt);
+                }
+                coll[coll.length - 1].update(dt);
+            } else {
+                coll.forEach(function (o) {
+                    o.update(dt);
+                });
+            }
+            
+        }
+        function render(dt) {
+            coll.forEach(function (o) {
+                o.render(dt);
+            })
+        }
+        function add(o) {
+            coll.push(o);
+            coll.sort(function (a, b) {
+                return a.pos[0] > b.pos[0];
+            })
+        }
+
+        return {
+            update: update,
+            render: render,
+            add: add
+        }
+    }();
+
+    /**
+     * [LineBall description]
+     * @param {object} cfg [description]
+     * {
+     *     pos: [0, 0],
+     *     lineLength: 100,
+     *     ballRadius: 30,
+     *     color: '#ff4a00',
+     *     angle: 0
+     * }
+     */
+    var LineBall = function (cfg) {
+        var defaults = {
+            pos: [0, 0],
+            //lineLength: 180 + Math.random()*30,
+            lineLength: 200,
+            ballRadius: 20,
+            color: '#ff4a00',
+            angle: 0 //-90 ~ 90
+        };
+        for (var k in cfg) {
+            defaults[k] = cfg[k];
+        }
+        for (var k in defaults) {
+            this[k] = defaults[k]
+        }
+
+        this.cfg = defaults;
+        this.ctx = cvs.ctx;
+        this.ballPos = [0, 0];
+
+        this.v = 0;
+        this.vx = 0;
+        this.vy = 0;
+        this.ax = 0;
+        this.ay = 0;
+
+        this.maxVx = Math.sqrt(2*g*(this.lineLength - Math.cos(this.angle*Math.PI/180)*this.lineLength));
+
+        this.ballPos[0] = this.pos[0] + this.lineLength*Math.sin(this.angle*Math.PI/180);
+        this.ballPos[1] = this.pos[1] + this.lineLength*Math.cos(this.angle*Math.PI/180);
+    }
+    LineBall.prototype = {
+        update: function (dt) {
+            var a = -g*Math.sin(this.angle*Math.PI/180);
+            this.v += a*dt;
+            this.v *= 0.997;
+
+            this.vx = this.v * Math.cos(this.angle*Math.PI/180);
+            this.vy = this.v * Math.sin(this.angle*Math.PI/180);
+
+            this.ballPos[0] += this.vx;
+            this.angle = Math.asin((this.ballPos[0]-this.pos[0])/this.lineLength)*180/Math.PI;
+            this.ballPos[1] = this.pos[1] + this.lineLength*Math.cos(this.angle*Math.PI/180);
+        },
+        render: function (dt) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.pos[0], this.pos[1]);
+            this.ctx.lineTo(this.ballPos[0], this.ballPos[1]);
+            this.ctx.strokeStyle = this.color;
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+            this.ctx.beginPath();
+            this.ctx.arc(this.ballPos[0], this.ballPos[1], this.ballRadius, 0, Math.PI*2, true);
+            this.ctx.closePath();
+            this.ctx.fillStyle = this.color;
+            this.ctx.fill();
+
+        }
+    }
+
+    collection.add(new LineBall({pos:[60.5, 0], angle:-40}));
+    collection.add(new LineBall({pos:[100.5, 0], angle:0}));
+    // collection.add(new LineBall({pos:[140.5, 0], angle:0}));
+    // collection.add(new LineBall({pos:[180.5, 0], angle:0}));
+    // collection.add(new LineBall({pos:[220.5, 0], angle:0}));
+    // collection.add(new LineBall({pos:[260.5, 0], angle:0}));
+
+    CEC.Ticker.singleton.on('tick', function (dt) {
+        cvs.clear();
+        collection.update(dt);
+        collection.render(dt);
+    });
+
+
+</script>
+</body>
+</html>
