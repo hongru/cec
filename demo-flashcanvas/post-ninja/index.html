@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="A simple HTML5 Template">
+  <meta name="author" content="dron">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0"/>
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/icon.png">
+  <link rel="stylesheet" href="images/index.css">
+  <title>切包裹游戏 Demo</title>
+<!--[if lt IE 9]>
+    <script type="text/javascript" src="./scripts/bin/flashcanvas.js"></script>
+<![endif]-->
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="landscape-tip" style="display:none">
+    <span>请旋转至横屏</span>
+  </div>
+</body>
+<script>
+  if( typeof require == "function" ) window.onload = function(){ require( "./scripts/main" ).start(); }; 
+  else window.onload = function () { 
+    var scriptTag = document.createElement('script');
+    scriptTag.type = 'text/javascript';
+    scriptTag.src = './scripts/main.js';
+    document.body.appendChild(scriptTag);
+    //document.write( "<script src='./scripts/main.js'><\/script>" ); 
+  };
+</script>
+</html>
