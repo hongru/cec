@@ -448,7 +448,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                     for (var i = 0, len = o.children.length; i < len; i ++) {
                         var c = o.children[i],
                             posc = [l + c.x, t + c.y, l + c.x + c.width, t + c.y + c.height];
-                        if (x > posc[0] && x < posc[2] && y > posc[1] && y < posc[3]) {
+                        if (c.visible && x > posc[0] && x < posc[2] && y > posc[1] && y < posc[3]) {
                             c._ev_offsetX = x - (l + c.x);
                             c._ev_offsetY = y - (t + c.y);
                             hoverSprites.push(c);
