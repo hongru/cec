@@ -50,8 +50,10 @@ KISSY.add(function (S, Cobject) {
             }
         },
         _dealImgs: function () {
-            var self = this;
+            var self = this,
+                hasFC = typeof FlashCanvas != 'undefined';
             if (typeof this.backgroundImage == 'string') {
+
                 //one img url
                 this._imgLength = 1;
 
@@ -63,13 +65,21 @@ KISSY.add(function (S, Cobject) {
                     return;
                 }
 
-                var img = new Image();
-                img.src = src;
-                img.onload = function () {
+                function imgOnload () {
                     self.loadedImgs.push(img);
                     self._checkImgs();
                     self.__cache__.images[src] = img;
                 }
+                var img = new Image();
+                img.src = src;
+                img.onload = imgOnload;
+
+                // fix flashcanvas load image
+                // if (typeof FlashCanvas != 'undefined') {
+                //     img = {};
+                //     img.src = src;
+                //     imgOnload();
+                // }
             } else if (this.backgroundImage && this.backgroundImage.nodeType == 1 && this.backgroundImage.nodeName == 'IMG') {
                 //one img el
                 this._imgLength = 1;

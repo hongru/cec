@@ -1,20 +1,10 @@
-/*
-combined files : 
+var CEC;
 
-cec/utils/prototypefix
-cec/klass
-cec/notifier/index
-cec/sprite/cobject
-cec/sprite/sprite
-cec/sprite/rectsprite
-cec/sprite/textsprite
-cec/sprite/animsprite
-cec/sprite/pathsprite
-cec/sprite/segmentsprite
-cec/sprite/index
-
-*/
-KISSY.add('cec/utils/prototypefix',function (S) {
+;(function () {
+    
+    var mods = {},
+        KISSY;
+mods['cec/utils/prototypefix'] = (function (S) {
     if ( !Array.prototype.forEach ) {
         Array.prototype.forEach = function(fn, scope) {
             for(var i = 0, len = this.length; i < len; ++i) {
@@ -22,10 +12,8 @@ KISSY.add('cec/utils/prototypefix',function (S) {
             }
         }
     }
-});
-//klass: a classical JS OOP façade
-
-KISSY.add('cec/klass',function (S) {
+})(KISSY);
+mods['cec/klass'] = (function (S) {
 
     var context = S || this,
         old = context.klass,
@@ -113,10 +101,8 @@ KISSY.add('cec/klass',function (S) {
 
     return klass;
 
-}, {
-    requires: ['cec/utils/prototypefix']
-});
-KISSY.add('cec/notifier/index',function (S, Klass) {
+})(KISSY,mods['cec/utils/prototypefix']);
+mods['cec/notifier/index'] = (function (S, Klass) {
     
     var Notifier = Klass({
         fire: function (ev, data) {
@@ -169,10 +155,96 @@ KISSY.add('cec/notifier/index',function (S, Klass) {
 
     return Notifier;
 
-}, {
-    requires: ['cec/klass']
-});
-KISSY.add('cec/sprite/cobject',function (S, Notifier) {
+})(KISSY,mods['cec/klass']);
+mods['cec/loader/index'] = (function (S, Notifier) {
+	
+	var Loader = Notifier.extend({
+		loadedImages: {},
+		initialize: function (assets, cb) {
+			this.load(assets, cb);
+		},
+		_tryLoadImg: function (img) {
+			var src, tryTime, me = this, timeout = [5000, 3000, 2000];
+			if (typeof img == 'string') {
+				src = img;
+				tryTime = 1;
+			} else {
+				src = img.originalSrc;
+				tryTime = parseInt(img.tryTime) + 1;
+			}
+
+			if (tryTime > 3) {
+				me.loaded ++;
+				me.loadedImages[src] = img;
+				me.invoke(img);
+				img = null;
+				return ;
+			}
+
+			tryTime > 1 && console.log('retry: ' + src);
+
+			var img = new Image();
+			img.src = src;
+			img.originalSrc = src;
+			img.tryTime = tryTime;
+			img.onload = function () {
+				clearTimeout(img._timer);
+				me.loaded ++;
+				me.loadedImages[src] = img;
+				me.invoke(img);
+				img = null;
+			}
+
+			img.onerror = function () {
+				clearTimeout(img._timer);
+				me._tryLoadImg(img);
+			}
+
+			img._timer = setTimeout(function () {
+				me._tryLoadImg(img);
+			}, (timeout[tryTime - 1] || 5000));
+		},
+		/**
+		 * [load description]
+		 * @param  {[Array]}   assets [description]
+		 * @param  {Function} cb     [description]
+		 * @return {[type]}          [description]
+		 */
+		load: function (assets, cb) {
+			var me = this;
+
+			this.loaded = 0;
+			this.assets = assets;
+			this.cb = cb;
+			this.loadLength = assets.length;
+
+			this.invoke()
+
+			for (var i = 0; i < this.loadLength; i ++) {
+				var src = assets[i],
+					img = this.loadedImages[src];
+				if (img) {
+					this.loaded++;
+					this.invoke(img);
+				} else {
+					me._tryLoadImg(src);
+				}
+			}
+		},
+		invoke: function (img) {
+			this.cb && this.cb.call(this, this.loaded/this.loadLength, img);
+		}
+	});
+
+	Loader.belongto = function (Sprite) {
+		Loader.prototype.mix(Sprite.prototype.__cache__.images, Loader.prototype.loadedImages);
+		Loader.prototype.loadedImages = Sprite.prototype.__cache__.images;
+	}
+
+	return Loader;
+
+})(KISSY,mods['cec/notifier/index']);
+mods['cec/sprite/cobject'] = (function (S, Notifier) {
     
     var Cobject = Notifier.extend({
         points: null,
@@ -247,13 +319,8 @@ KISSY.add('cec/sprite/cobject',function (S, Notifier) {
 
     return Cobject;
 
-}, {
-    requires: ['cec/notifier/']
-});
-// todo:
-// 1. bubble events binding
-// 2. capture events 'mouseover, mouseout' fix
-KISSY.add('cec/sprite/sprite',function (S, Cobject) {
+})(KISSY,mods['cec/notifier/index']);
+mods['cec/sprite/sprite'] = (function (S, Cobject) {
     
     var Sprite = Cobject.extend({
         __cache__: {
@@ -308,7 +375,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                 //hack flashcanvas
                 if (hasFC) {
                     //console.log(this.backgroundImage)
-                    //this.backgroundImage += /\?/.test(this.backgroundImage) ? ('&t=' + Math.random()) : ('?t='+Math.random());
+                    this.backgroundImage += /\?/.test(this.backgroundImage) ? ('&t=' + Math.random()) : ('?t='+Math.random());
                 }
 
                 //one img url
@@ -328,8 +395,8 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                     self.__cache__.images[src] = img;
                 }
                 var img = new Image();
-                img.onload = imgOnload;
                 img.src = src;
+                img.onload = imgOnload;
 
                 // fix flashcanvas load image
                 // if (typeof FlashCanvas != 'undefined') {
@@ -743,35 +810,23 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
 
     return Sprite;
 
-}, {
-    requires: ['cec/sprite/cobject']
-});
-//RectSprite
-KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
-
-    var supportBackgroundSize = false;
+})(KISSY,mods['cec/sprite/cobject']);
+mods['cec/sprite/rectsprite'] = (function (S, Sprite) {
 	
 	var RectSprite = Sprite.extend({
 
 		initialize: function (options) {
 			
 			this.shape = 'rect';
-
-            if (supportBackgroundSize) {
-                this._backgroundCanvas = document && document.createElement('canvas');
-                if (typeof FlashCanvas != "undefined") {
-                    FlashCanvas.initElement(this._backgroundCanvas);
-                    this._backgroundCanvas.style.position = 'absolute';
-                    this._backgroundCanvas.style.left = 0;
-                    this._backgroundCanvas.style.top = 0;
-                    //document.body.appendChild(this._backgroundCanvas);
-                }
-
-                if (this._backgroundCanvas.getContext) {
-                    this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
-                }
+            this._backgroundCanvas = document && document.createElement('canvas');
+            if (typeof FlashCanvas != "undefined") {
+                FlashCanvas.initElement(this._backgroundCanvas);
+                this._backgroundCanvas.style.position = 'absolute';
+                this._backgroundCanvas.style.left = 0;
+                this._backgroundCanvas.style.top = 0;
+                //document.body.appendChild(this._backgroundCanvas);
             }
-                
+            this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
 
             this.supr(options);
 		},
@@ -825,19 +880,19 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
             return this.setBackgroundPosition([this.backgroundPositionX, this.backgroundPositionY], autoRender);
         },
         setBackgroundSize: function (size, autoRender) {
-            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
+            if (!this.backgroundImageReady) return this;
             this.set({backgroundSize: (typeof size == 'string' ? size : size.join(' '))}, autoRender);
             this._getBackgroundPosition();
             this._updateBackgroundCanvas();
             return this;
         },
         setBackgroundWidth: function (w, autoRender) {
-            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
+            if (!this.backgroundImageReady) return this;
             this.set({backgroundWidth:w});
             return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
         },
         setBackgroundHeight: function (h, autoRender) {
-            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
+            if (!this.backgroundImageReady) return this;
             this.set({backgroundHeight:h});
             return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
         },
@@ -849,7 +904,7 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = (typeof FlashCanvas != 'undefined' || !supportBackgroundSize) ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    imgEl = typeof FlashCanvas != 'undefined' ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
                     //imgEl = (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
@@ -951,7 +1006,7 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
                 imgWidth = this.frameWidth || imgEl.width,
                 imgHeight = this.frameHeight || imgEl.height,
                 bgsize = [imgWidth, imgHeight];
-            if (typeof this.backgroundSize == 'string' && supportBackgroundSize) {
+            if (typeof this.backgroundSize == 'string') {
                 bgsize = this.backgroundSize.split(' ');
                 if (bgsize.length == 1) bgsize[1] = 'auto';
                 if (bgsize[0] == 'auto' && bgsize[1] == 'auto') {
@@ -976,8 +1031,6 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
             return bgsize;
         },
         _updateBackgroundCanvas: function () {
-            if (!supportBackgroundSize) return ;
-            
             var imgEl = this.backgroundImageElement,
                 imgWidth = imgEl.width,
                 imgHeight = imgEl.height;
@@ -992,11 +1045,8 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 
 	return RectSprite;
 
-}, {
-	requires: ['cec/sprite/sprite']
-});
-//TextSprite
-KISSY.add('cec/sprite/textsprite',function (S, RectSprite) {
+})(KISSY,mods['cec/sprite/sprite']);
+mods['cec/sprite/textsprite'] = (function (S, RectSprite) {
     
     var TextSprite = RectSprite.extend({
         text: null,
@@ -1216,11 +1266,8 @@ KISSY.add('cec/sprite/textsprite',function (S, RectSprite) {
 
     return TextSprite;
 
-}, {
-    requires: ['cec/sprite/rectsprite']
-});
-//Frame Animation Sprite
-KISSY.add('cec/sprite/animsprite',function (S, RectSprite) {
+})(KISSY,mods['cec/sprite/rectsprite']);
+mods['cec/sprite/animsprite'] = (function (S, RectSprite) {
 	/**
 	 * animConfig: {
 	 * 		autoPlay: true,
@@ -1365,10 +1412,8 @@ KISSY.add('cec/sprite/animsprite',function (S, RectSprite) {
 
 	return AnimSprite;
 
-}, {
-	requires: ['cec/sprite/rectsprite']
-})
-KISSY.add('cec/sprite/pathsprite',function (S, Sprite) {
+})(KISSY,mods['cec/sprite/rectsprite']);
+mods['cec/sprite/pathsprite'] = (function (S, Sprite) {
 	
 	var PathSprite = Sprite.extend({
 		initialize: function (options) {
@@ -1420,10 +1465,8 @@ KISSY.add('cec/sprite/pathsprite',function (S, Sprite) {
 
 	return PathSprite;
 
-}, {
-	requires: ['cec/sprite/sprite']
-})
-KISSY.add('cec/sprite/segmentsprite',function (S, PathSprite) {
+})(KISSY,mods['cec/sprite/sprite']);
+mods['cec/sprite/segmentsprite'] = (function (S, PathSprite) {
     
     var SegmentSprite = PathSprite.extend({
         initialize: function (options) {
@@ -1458,11 +1501,8 @@ KISSY.add('cec/sprite/segmentsprite',function (S, PathSprite) {
 
     return SegmentSprite;
 
-}, {
-    requires: ['cec/sprite/pathsprite']
-})
-//Sprite index
-KISSY.add('cec/sprite/index',function (S, Poly, Rect, Anim, Path, Segment) {
+})(KISSY,mods['cec/sprite/pathsprite']);
+mods['cec/sprite/index'] = (function (S, Poly, Rect, Anim, Path, Segment) {
     
     var Sprite = Poly;
     Sprite.Rect = Rect;
@@ -1471,6 +1511,70 @@ KISSY.add('cec/sprite/index',function (S, Poly, Rect, Anim, Path, Segment) {
     Sprite.Segment = Segment;
 
     return Sprite;
-}, {
-    requires: ['cec/sprite/sprite', 'cec/sprite/textsprite', 'cec/sprite/animsprite', 'cec/sprite/pathsprite', 'cec/sprite/segmentsprite']
-})
+})(KISSY,mods['cec/sprite/sprite'],mods['cec/sprite/textsprite'],mods['cec/sprite/animsprite'],mods['cec/sprite/pathsprite'],mods['cec/sprite/segmentsprite']);
+mods['cec/ticker/index'] = (function (S, Notifier) {
+    
+    var requestAnimFrame =  (function() {
+      return window.requestAnimationFrame ||
+             window.webkitRequestAnimationFrame ||
+             window.mozRequestAnimationFrame ||
+             window.oRequestAnimationFrame ||
+             window.msRequestAnimationFrame ||
+             function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
+               window.setTimeout(callback, 1000/60);
+             };
+    })();
+
+    var Ticker = Notifier.extend({
+        initialize: function () {
+            this._on = true;
+            this._lastStepTime = (+new Date);
+            this._loop();
+            this.dt = 0.016;
+        },
+        _loop: function () {
+            if (!this._on) { return }
+            var me = this;
+            requestAnimFrame(function () {
+                me._loop();
+            });
+
+            var time = (+new Date),
+                dt = (time - me._lastStepTime) / 1000;
+            // get wrong 'dt' back
+            if (dt >= 3) {
+                dt = 1/30;
+            }
+
+            me.fire('tick', dt);
+            me.dt = dt;
+            me._lastStepTime = time;
+        },
+        stop: function () {
+            this._on = false;
+        },
+        resume: function () {
+            this._on = true;
+            this._lastStepTime = (+new Date);
+            this._loop();
+        }
+
+    });
+    Ticker.singleton = new Ticker();
+
+    return Ticker;
+
+})(KISSY,mods['cec/notifier/index']);
+mods['cec/cec'] = (function (S, Loader, Sprite, Ticker) {
+    
+    var CEC = {};
+    CEC.Loader = Loader;
+    CEC.Sprite = Sprite;
+    CEC.Ticker = Ticker;
+
+    return CEC;
+
+})(KISSY,mods['cec/loader/index'],mods['cec/sprite/index'],mods['cec/ticker/index']);
+CEC = mods['cec/cec']; 
+
+})();

@@ -49,6 +49,7 @@ canvas {
         .appendTo(stage)
         .on('render:before', function () {
             this.setBackgroundPositionX('+1').setBackgroundPositionY('+1');
+            this.rotate('+1');
             //backgroundSize 的改变 挺耗性能，尽量避免频繁改变
             //this.setBackgroundWidth('+1')
         });

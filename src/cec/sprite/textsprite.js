@@ -24,6 +24,13 @@ KISSY.add(function (S, RectSprite) {
             this.supr(options);
 
             this._textCanvas = document.createElement('canvas');
+            if (typeof FlashCanvas != "undefined") {
+                FlashCanvas.initElement(this._textCanvas);
+                this._textCanvas.style.position = 'absolute';
+                this._textCanvas.style.left = 0;
+                this._textCanvas.style.top = 0;
+                //document.body.appendChild(this._textCanvas);
+            }
             this._textCtx = this._textCanvas.getContext('2d');
             this._updateTextCanvas();
         },

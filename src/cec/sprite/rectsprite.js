@@ -1,16 +1,29 @@
 //RectSprite
 KISSY.add(function (S, Sprite) {
+
+    var supportBackgroundSize = false;
 	
 	var RectSprite = Sprite.extend({
 
 		initialize: function (options) {
 			
 			this.shape = 'rect';
-            this._backgroundCanvas = document && document.createElement('canvas');
-            if (typeof FlashCanvas != "undefined") {
-                FlashCanvas.initElement(this._backgroundCanvas);
+
+            if (supportBackgroundSize) {
+                this._backgroundCanvas = document && document.createElement('canvas');
+                if (typeof FlashCanvas != "undefined") {
+                    FlashCanvas.initElement(this._backgroundCanvas);
+                    this._backgroundCanvas.style.position = 'absolute';
+                    this._backgroundCanvas.style.left = 0;
+                    this._backgroundCanvas.style.top = 0;
+                    //document.body.appendChild(this._backgroundCanvas);
+                }
+
+                if (this._backgroundCanvas.getContext) {
+                    this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+                }
             }
-            this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+                
 
             this.supr(options);
 		},
@@ -64,19 +77,19 @@ KISSY.add(function (S, Sprite) {
             return this.setBackgroundPosition([this.backgroundPositionX, this.backgroundPositionY], autoRender);
         },
         setBackgroundSize: function (size, autoRender) {
-            if (!this.backgroundImageReady) return this;
+            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
             this.set({backgroundSize: (typeof size == 'string' ? size : size.join(' '))}, autoRender);
             this._getBackgroundPosition();
             this._updateBackgroundCanvas();
             return this;
         },
         setBackgroundWidth: function (w, autoRender) {
-            if (!this.backgroundImageReady) return this;
+            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
             this.set({backgroundWidth:w});
             return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
         },
         setBackgroundHeight: function (h, autoRender) {
-            if (!this.backgroundImageReady) return this;
+            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
             this.set({backgroundHeight:h});
             return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
         },
@@ -88,7 +101,8 @@ KISSY.add(function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = typeof FlashCanvas != 'undefined' ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    imgEl = (typeof FlashCanvas != 'undefined' || !supportBackgroundSize) ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    //imgEl = (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;
@@ -189,7 +203,7 @@ KISSY.add(function (S, Sprite) {
                 imgWidth = this.frameWidth || imgEl.width,
                 imgHeight = this.frameHeight || imgEl.height,
                 bgsize = [imgWidth, imgHeight];
-            if (typeof this.backgroundSize == 'string') {
+            if (typeof this.backgroundSize == 'string' && supportBackgroundSize) {
                 bgsize = this.backgroundSize.split(' ');
                 if (bgsize.length == 1) bgsize[1] = 'auto';
                 if (bgsize[0] == 'auto' && bgsize[1] == 'auto') {
@@ -214,6 +228,8 @@ KISSY.add(function (S, Sprite) {
             return bgsize;
         },
         _updateBackgroundCanvas: function () {
+            if (!supportBackgroundSize) return ;
+            
             var imgEl = this.backgroundImageElement,
                 imgWidth = imgEl.width,
                 imgHeight = imgEl.height;

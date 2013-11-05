@@ -7,7 +7,7 @@ KISSY.add(function (S, Notifier) {
              window.oRequestAnimationFrame ||
              window.msRequestAnimationFrame ||
              function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-               window.setTimeout(callback, 1000/60);
+                setTimeout(callback, 1000/60);
              };
     })();
 

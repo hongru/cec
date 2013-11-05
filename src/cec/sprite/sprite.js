@@ -50,8 +50,15 @@ KISSY.add(function (S, Cobject) {
             }
         },
         _dealImgs: function () {
-            var self = this;
+            var self = this,
+                hasFC = typeof FlashCanvas != 'undefined';
             if (typeof this.backgroundImage == 'string') {
+                //hack flashcanvas
+                if (hasFC) {
+                    //console.log(this.backgroundImage)
+                    //this.backgroundImage += /\?/.test(this.backgroundImage) ? ('&t=' + Math.random()) : ('?t='+Math.random());
+                }
+
                 //one img url
                 this._imgLength = 1;
 
@@ -69,15 +76,15 @@ KISSY.add(function (S, Cobject) {
                     self.__cache__.images[src] = img;
                 }
                 var img = new Image();
-                img.src = src;
                 img.onload = imgOnload;
+                img.src = src;
 
                 // fix flashcanvas load image
-                if (typeof FlashCanvas != 'undefined') {
-                    img = {};
-                    img.src = src;
-                    imgOnload();
-                }
+                // if (typeof FlashCanvas != 'undefined') {
+                //     img = {};
+                //     img.src = src;
+                //     imgOnload();
+                // }
             } else if (this.backgroundImage && this.backgroundImage.nodeType == 1 && this.backgroundImage.nodeName == 'IMG') {
                 //one img el
                 this._imgLength = 1;

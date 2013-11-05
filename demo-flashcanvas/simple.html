@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<!--[if lt IE 9]>
+    <script type="text/javascript" src="./bin-pro/flashcanvas.js"></script>
+<![endif]-->
+<body>
+
+<canvas id="canvas" width="180" height="130" style="position:absolute;z-index:-1"></canvas>
+
+
+
+<script>
+    function canvasReady() {
+      var canvas2 = document.createElement('canvas');
+      document.body.appendChild(canvas2);
+      
+
+      if (typeof FlashCanvas != "undefined") 
+                FlashCanvas.initElement(canvas2);
+
+      canvas2.width = 100;
+      canvas2.height = 100;
+
+      draw(canvas2.getContext('2d'), document.getElementById('canvas').getContext('2d'));
+    }
+    function draw(ctx, ctx2) {
+      var img = new Image();
+      img.onload = function(){
+          ctx.translate(-10, 5);
+          ctx.scale(1.2, 0.8);
+          ctx.rotate(5 * Math.PI / 180);
+
+        ctx.drawImage(img,0,0);
+        ctx.beginPath();
+        ctx.moveTo(30,96);
+        ctx.lineTo(70,66);
+        ctx.lineTo(103,76);
+        ctx.lineTo(170,15);
+        ctx.stroke();
+
+        ctx2.globalAlpha = 0.5;
+        ctx2.shadowColor = "red";
+        ctx2.shadowBlur = 3;
+        ctx2.fillStyle = "green";
+        ctx2.fillRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
+        ctx2.drawImage(ctx.canvas, 10, 10);
+        ctx2.drawImage(ctx.canvas, 30, 30, 100, 130);
+        ctx2.drawImage(ctx.canvas, 10, 10, 40, 40, 60, 100, 80, 80);
+
+        // prevent IE6 memory leak
+        img = null;
+      }
+      img.src = './images/package/pkg_03.png';
+    }
+
+  onload = canvasReady;
+</script>
+
+
+</body>
+</html>

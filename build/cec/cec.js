@@ -203,7 +203,7 @@ KISSY.add('cec/loader/index',function (S, Notifier) {
 			tryTime > 1 && console.log('retry: ' + src);
 
 			var img = new Image();
-			img.src = src;
+			
 			img.originalSrc = src;
 			img.tryTime = tryTime;
 			img.onload = function () {
@@ -222,6 +222,8 @@ KISSY.add('cec/loader/index',function (S, Notifier) {
 			img._timer = setTimeout(function () {
 				me._tryLoadImg(img);
 			}, (timeout[tryTime - 1] || 5000));
+
+			img.src = src;
 		},
 		/**
 		 * [load description]
@@ -395,8 +397,15 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
             }
         },
         _dealImgs: function () {
-            var self = this;
+            var self = this,
+                hasFC = typeof FlashCanvas != 'undefined';
             if (typeof this.backgroundImage == 'string') {
+                //hack flashcanvas
+                if (hasFC) {
+                    //console.log(this.backgroundImage)
+                    //this.backgroundImage += /\?/.test(this.backgroundImage) ? ('&t=' + Math.random()) : ('?t='+Math.random());
+                }
+
                 //one img url
                 this._imgLength = 1;
 
@@ -414,15 +423,15 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                     self.__cache__.images[src] = img;
                 }
                 var img = new Image();
-                img.src = src;
                 img.onload = imgOnload;
+                img.src = src;
 
                 // fix flashcanvas load image
-                if (typeof FlashCanvas != 'undefined') {
-                    img = {};
-                    img.src = src;
-                    imgOnload();
-                }
+                // if (typeof FlashCanvas != 'undefined') {
+                //     img = {};
+                //     img.src = src;
+                //     imgOnload();
+                // }
             } else if (this.backgroundImage && this.backgroundImage.nodeType == 1 && this.backgroundImage.nodeName == 'IMG') {
                 //one img el
                 this._imgLength = 1;
@@ -834,17 +843,30 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
 });
 //RectSprite
 KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
+
+    var supportBackgroundSize = false;
 	
 	var RectSprite = Sprite.extend({
 
 		initialize: function (options) {
 			
 			this.shape = 'rect';
-            this._backgroundCanvas = document && document.createElement('canvas');
-            if (typeof FlashCanvas != "undefined") {
-                FlashCanvas.initElement(this._backgroundCanvas);
+
+            if (supportBackgroundSize) {
+                this._backgroundCanvas = document && document.createElement('canvas');
+                if (typeof FlashCanvas != "undefined") {
+                    FlashCanvas.initElement(this._backgroundCanvas);
+                    this._backgroundCanvas.style.position = 'absolute';
+                    this._backgroundCanvas.style.left = 0;
+                    this._backgroundCanvas.style.top = 0;
+                    //document.body.appendChild(this._backgroundCanvas);
+                }
+
+                if (this._backgroundCanvas.getContext) {
+                    this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+                }
             }
-            this._backgroundCanvasCtx = this._backgroundCanvas.getContext('2d');
+                
 
             this.supr(options);
 		},
@@ -898,19 +920,19 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
             return this.setBackgroundPosition([this.backgroundPositionX, this.backgroundPositionY], autoRender);
         },
         setBackgroundSize: function (size, autoRender) {
-            if (!this.backgroundImageReady) return this;
+            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
             this.set({backgroundSize: (typeof size == 'string' ? size : size.join(' '))}, autoRender);
             this._getBackgroundPosition();
             this._updateBackgroundCanvas();
             return this;
         },
         setBackgroundWidth: function (w, autoRender) {
-            if (!this.backgroundImageReady) return this;
+            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
             this.set({backgroundWidth:w});
             return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
         },
         setBackgroundHeight: function (h, autoRender) {
-            if (!this.backgroundImageReady) return this;
+            if (!this.backgroundImageReady || !supportBackgroundSize) return this;
             this.set({backgroundHeight:h});
             return this.setBackgroundSize([this.backgroundWidth, this.backgroundHeight], autoRender);
         },
@@ -922,7 +944,8 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 			//images
             if (this.backgroundImageElement) {
                 var bgPos = [this.backgroundPositionX, this.backgroundPositionY],
-                    imgEl = FlashCanvas ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    imgEl = (typeof FlashCanvas != 'undefined' || !supportBackgroundSize) ? this.backgroundImageElement : (this._backgroundCanvas || this.backgroundImageElement),
+                    //imgEl = (this._backgroundCanvas || this.backgroundImageElement),
                     iw = imgEl.width,
                     ih = imgEl.height,
                     fixPos = this.borderWidth ? this.borderWidth/2 : 0;
@@ -1023,7 +1046,7 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
                 imgWidth = this.frameWidth || imgEl.width,
                 imgHeight = this.frameHeight || imgEl.height,
                 bgsize = [imgWidth, imgHeight];
-            if (typeof this.backgroundSize == 'string') {
+            if (typeof this.backgroundSize == 'string' && supportBackgroundSize) {
                 bgsize = this.backgroundSize.split(' ');
                 if (bgsize.length == 1) bgsize[1] = 'auto';
                 if (bgsize[0] == 'auto' && bgsize[1] == 'auto') {
@@ -1048,6 +1071,8 @@ KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
             return bgsize;
         },
         _updateBackgroundCanvas: function () {
+            if (!supportBackgroundSize) return ;
+            
             var imgEl = this.backgroundImageElement,
                 imgWidth = imgEl.width,
                 imgHeight = imgEl.height;
@@ -1091,6 +1116,13 @@ KISSY.add('cec/sprite/textsprite',function (S, RectSprite) {
             this.supr(options);
 
             this._textCanvas = document.createElement('canvas');
+            if (typeof FlashCanvas != "undefined") {
+                FlashCanvas.initElement(this._textCanvas);
+                this._textCanvas.style.position = 'absolute';
+                this._textCanvas.style.left = 0;
+                this._textCanvas.style.top = 0;
+                //document.body.appendChild(this._textCanvas);
+            }
             this._textCtx = this._textCanvas.getContext('2d');
             this._updateTextCanvas();
         },
@@ -1546,7 +1578,7 @@ KISSY.add('cec/ticker/index',function (S, Notifier) {
              window.oRequestAnimationFrame ||
              window.msRequestAnimationFrame ||
              function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-               window.setTimeout(callback, 1000/60);
+                setTimeout(callback, 1000/60);
              };
     })();
 
@@ -1593,15 +1625,16 @@ KISSY.add('cec/ticker/index',function (S, Notifier) {
     requires: ['cec/notifier/']
 });
 //CEC index
-KISSY.add('cec/cec',function (S, Loader, Sprite, Ticker) {
+KISSY.add('cec/cec',function (S, Loader, Sprite, Ticker, Notifier) {
     
     var CEC = {};
     CEC.Loader = Loader;
     CEC.Sprite = Sprite;
     CEC.Ticker = Ticker;
+    CEC.Notifier = Notifier;
 
     return CEC;
 
 }, {
-    requires: ['cec/loader/index', 'cec/sprite/index', 'cec/ticker/index'] 
+    requires: ['cec/loader/index', 'cec/sprite/index', 'cec/ticker/index', 'cec/notifier/index'] 
 });
