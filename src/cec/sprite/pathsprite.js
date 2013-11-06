@@ -39,7 +39,7 @@ KISSY.add(function (S, Sprite) {
 			return this.set({lineColor: c}, autoRender);
 		},
         setPoint: function (i, p, autoRender) {
-            if (i > 0 && i < this.points.length) {
+            if (i >= 0 && i < this.points.length) {
                 this.points[i] = p;
             }
             this._updateBounding();

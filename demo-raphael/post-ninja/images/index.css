@@ -1,0 +1,38 @@
+html, body{
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body, #canvas{
+  background-color: #000;
+}
+
+#canvas.retina{
+  -webkit-transform-origin: left top;
+  -webkit-transform: scale(.5, .5);
+}
+
+#landscape-tip{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  display: none;
+  background-color: #000;
+}
+
+#landscape-tip span{
+  color: #ccc;
+  font-size: 18px;
+  display: block;
+  width: 200px;
+  height: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -100px;
+  margin-top: -15px;
+  text-align: center;
+}

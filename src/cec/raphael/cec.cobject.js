@@ -6,9 +6,9 @@ CEC.Cobject = function (Notifier) {
         scaleX: 1,
         scaleY: 1,
         angle: 0,
-        fillColor: null,
+        fillColor: 'none',
         borderWidth: 0,
-        borderColor: null,
+        borderColor: 'none',
         opacity: 1,
         zIndex: 0,
         visible: true,
@@ -49,10 +49,21 @@ CEC.Cobject = function (Notifier) {
 
                 this.paper = Raphael(this.canvas, this.width, this.height);
                 this.paper.canvas.style.position = 'absolute';
-                this.paper.canvas.style.zIndex = 1000;
+                //this.paper.canvas.style.zIndex = 1000;
                 this.points = [[0,0], [this.width, 0], [this.width, this.height], [0, this.height]];
                 this.type = 'paper';
                 this.shape = 'rect';  
+                
+                var eventsReceptor = document.createElement('div');
+                this.canvas.appendChild(eventsReceptor);
+                eventsReceptor.style.width = this.width + 'px';
+                eventsReceptor.style.height = this.height + 'px';
+                eventsReceptor.style.left = 0;
+                eventsReceptor.style.top = 0;
+                eventsReceptor.style.position = 'absolute';
+                eventsReceptor.style.zIndex = 10000;
+                this.eventsReceptor = eventsReceptor;
+                this.canvas.eventsReceptor = eventsReceptor;
 
 
             } else {

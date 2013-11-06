@@ -32,11 +32,8 @@ CEC.Sprite = function (Cobject) {
 
                 var image = o.paper.image(o.backgroundImage, absX+o.x, absY+o.y, iw, ih);
                 image.attr({
-                    'fill': o.fillColor || 'rgba(0,0,0,0)',
                     'opacity': o.opacity,
-                    'stroke': o.borderColor,
-                    'stroke-width': o.borderWidth
-
+                    'stroke': 'none'
                 });
 
                 o.element = image;
@@ -52,12 +49,8 @@ CEC.Sprite = function (Cobject) {
                 } 
                 
                 var div = document.createElement('div');
-                this.canvas.appendChild(div);
-
-                this._setStyle(this.canvas, {
-                    position: 'relative',
-                    overflow: 'hidden'
-                });
+                o.canvas.appendChild(div);
+                
                 var rules = {
                     position: 'absolute',
                     width: o.width + 'px',
@@ -68,9 +61,9 @@ CEC.Sprite = function (Cobject) {
                     backgroundRepeat : o.backgroundRepeat,
                     backgroundPosition : o.backgroundPosition
                 };
-                if (o.fillColor) rules.backgroundColor = o.fillColor;
-                if (o.borderWidth) rules.borderWidth = parseFloat(o.borderWidth) + 'px';
-                if (o.borderColor) rules.borderColor = o.borderColor;
+
+               // if (o.borderWidth) rules.borderWidth = parseFloat(o.borderWidth) + 'px';
+               // if (o.borderColor) rules.borderColor = o.borderColor;
 
                 this._setStyle(div, rules);
 
@@ -113,17 +106,35 @@ CEC.Sprite = function (Cobject) {
             var rect = o.paper.rect(absX + o.x, absY + o.y, o.width, o.height);
 
             rect.attr({
-                'fill': o.fillColor || 'rgba(0, 0, 0, 0)',
                 'opacity': o.opacity,
-                'stroke': o.borderColor,
-                'stroke-width': o.borderWidth
-
+                'stroke': 'none'
             });
 
             o.element = rect;
             this.children.push(o);
 
             return rect;
+        },
+        _addPath: function (o) {
+            var absX = this.element ? this.element.attrs['x'] : 0,
+                absY = this.element ? this.element.attrs['y'] : 0;
+                
+            var p = ['M'+(absX+o.points[0][0])+' '+(absY+o.points[0][1])];
+            for (var i = 1; i < o.points.length; i ++) {
+                p.push('L'+(absX+o.points[i][0]) + ' ' + (absY+o.points[i][1]));
+            }
+            p.push('Z');
+            var path = o.paper.path(p.join(''));
+            path.attr({
+                'opacity': o.opacity,
+                'stroke': o.lineColor,
+                'stroke-width': o.lineWidth
+            });
+            
+            o.element = path;
+            this.children.push(o);
+            
+            return path;
         },
         delegate: function () {
             //todo
@@ -134,11 +145,28 @@ CEC.Sprite = function (Cobject) {
         add: function (o) {
 
             o.parent = this;
-            o.paper = this.paper;
-            o.canvas = this.canvas;
+            
+            var canvas = document.createElement('div');
+            this.canvas.appendChild(canvas);
+
+            this._setStyle(canvas, {
+                width: this.canvas.offsetWidth + 'px',
+                height: this.canvas.offsetHeight + 'px',
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                overflow: 'hidden'
+            });
+            
+            var paper = Raphael(canvas);
+            
+            o.canvas = canvas;
+            o.paper = paper;
 
             if (o.backgroundImage) {
                 this._addImage(o);
+            } else if (o.type == 'path') {
+                this._addPath(o);
             } else {
                 this._addRect(o);
             }
@@ -272,9 +300,7 @@ CEC.Sprite = function (Cobject) {
                     fontSize: parseInt(this.fontSize) + 'px',
                     fontWeight: this.fontWeight,
                     height: this.height + 'px',
-                    width: this.width + 'px',
-                    borderColor: this.borderColor,
-                    borderWidth: this.borderWidth + 'px'
+                    width: this.width + 'px'
                 });
             }
 
@@ -401,6 +427,3 @@ CEC.Sprite = function (Cobject) {
 
     return Sprite;
 }(CEC.Cobject);
-
-// todo
-CEC.Sprite.Rect = CEC.Sprite;

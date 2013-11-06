@@ -154,4 +154,4 @@ CEC.Sprite.Anim = function (RectSprite, Ticker) {
 
     return AnimSprite;
 
-}(CEC.Sprite, CEC.Ticker)
+}(CEC.Sprite, CEC.Ticker);
