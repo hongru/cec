@@ -73,17 +73,27 @@ canvas {
             //this.setBackgroundWidth('+1')
         });
 
+        var txt = '测试 Microsoft Yahei 测试 Microsoft Yahei 测试 Microsoft Yahei 测试 Microsoft Yahei测试 Microsoft Yahei测试 Microsoft Yahei测试 Microsoft Yahei';
+        txt = txt.split('');
         var font = new RectSprite({
-            x: 10,
+            x: 0,
             y: 10,
-            width: 100,
+            width: stage.width,
             height: 100,
-            text: '测试 Microsoft Yahei',
+            text: '',
             fontFamily: 'Microsoft Yahei'
         }).appendTo(stage);
 
 
+        var _t = 0, n = 0;
         Ticker.singleton.on('tick', function (dt) {
+            _t += dt;
+            if (_t > 0.1) {
+                _t = 0;
+                n ++;
+                var t = txt.slice(0, n).join('');
+                font.setText(t);
+            }
             stage.clear();
             stage.render(dt);
         }); 

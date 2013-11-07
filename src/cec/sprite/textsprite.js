@@ -215,7 +215,7 @@ KISSY.add(function (S, RectSprite) {
             }
 
         },
-        text: function (t) {
+        setText: function (t) {
             if (t != undefined) {
                 this.text = t;
                 this._updateTextCanvas();
