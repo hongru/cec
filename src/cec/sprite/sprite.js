@@ -369,6 +369,7 @@ KISSY.add(function (S, Cobject) {
             }
             this.ctx.lineTo(p[0][0]-relativeX, p[0][1]-relativeY);
             this.ctx.closePath();
+
             this.ctx.translate(-relativeX, -relativeY);
 
             this.ctx.globalAlpha = this.opacity;
@@ -382,6 +383,7 @@ KISSY.add(function (S, Cobject) {
                 this.ctx.stroke();
             }
 
+            this.fire('render', dt);
         },
         clear: function (x, y, w, h) {
             if (x == undefined) x = 0;
