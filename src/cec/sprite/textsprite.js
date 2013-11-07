@@ -214,6 +214,15 @@ KISSY.add(function (S, RectSprite) {
                 
             }
 
+        },
+        text: function (t) {
+            if (t != undefined) {
+                this.text = t;
+                this._updateTextCanvas();
+                return this;
+            } else {
+                return this.text;
+            }
         }
     });
 
