@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<canvas id="canvas" width="200" height="200"></canvas>
+<img id="img" src="http://gtms01.alicdn.com/tps/i1/T1TicJFgVcXXab91rk-461-457.png" />
+
+<script>
+    var canvas = document.getElementById('canvas'),
+        ctx = canvas.getContext('2d'),
+        img = document.getElementById('img'),
+        tmp = document.createElement('canvas'),
+        _ctx = tmp.getContext('2d');
+
+
+
+    onload = function () {
+
+        tmp.width = img.width;
+        tmp.height = img.height;
+        _ctx.drawImage(img, 0, 0);
+console.time('cvs')
+        for(var i = 0;i < 1000; i ++) {
+            ctx.drawImage(tmp, 0, 0);
+        }
+        console.timeEnd('cvs')
+        console.time('img')
+        for(var i = 0;i < 1000; i ++) {
+            ctx.drawImage(img, 0, 0);
+        }
+        console.timeEnd('img')
+
+        
+    }
+</script>
