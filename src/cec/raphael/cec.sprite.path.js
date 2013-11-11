@@ -1,4 +1,4 @@
-CEC.Sprite.Path = function (Sprite) {
+CEC._.Sprite.Path = function (Sprite) {
     
     var PathSprite = Sprite.extend({
         initialize: function (option) {
@@ -50,4 +50,9 @@ CEC.Sprite.Path = function (Sprite) {
     
     return PathSprite;
     
-}(CEC.Sprite);
+}(CEC._.Sprite);
+
+//mix
+if (CEC._.isUseRaphael()) {
+    CEC.Sprite.Path = CEC._.Sprite.Path;
+}

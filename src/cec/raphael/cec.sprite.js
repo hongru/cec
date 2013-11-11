@@ -1,4 +1,4 @@
-CEC.Sprite = function (Cobject) {
+CEC._.Sprite = function (Cobject) {
     var Sprite = Cobject.extend({
         __cache__: {
             images: {},
@@ -426,4 +426,12 @@ CEC.Sprite = function (Cobject) {
     });
 
     return Sprite;
-}(CEC.Cobject);
+}(CEC._.Cobject);
+
+CEC._.Sprite.Rect = CEC._.Sprite;
+
+//mix
+if (CEC._.isUseRaphael()) {
+    CEC.Sprite = CEC._.Sprite;
+
+}

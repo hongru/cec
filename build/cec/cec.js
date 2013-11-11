@@ -716,6 +716,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
             }
             this.ctx.lineTo(p[0][0]-relativeX, p[0][1]-relativeY);
             this.ctx.closePath();
+
             this.ctx.translate(-relativeX, -relativeY);
 
             this.ctx.globalAlpha = this.opacity;
@@ -729,6 +730,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                 this.ctx.stroke();
             }
 
+            this.fire('render', dt);
         },
         clear: function (x, y, w, h) {
             if (x == undefined) x = 0;
@@ -1306,6 +1308,15 @@ KISSY.add('cec/sprite/textsprite',function (S, RectSprite) {
                 
             }
 
+        },
+        setText: function (t) {
+            if (t != undefined) {
+                this.text = t;
+                this._updateTextCanvas();
+                return this;
+            } else {
+                return this.text;
+            }
         }
     });
 
@@ -1504,7 +1515,7 @@ KISSY.add('cec/sprite/pathsprite',function (S, Sprite) {
 			return this.set({lineColor: c}, autoRender);
 		},
         setPoint: function (i, p, autoRender) {
-            if (i > 0 && i < this.points.length) {
+            if (i >= 0 && i < this.points.length) {
                 this.points[i] = p;
             }
             this._updateBounding();

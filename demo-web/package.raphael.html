@@ -19,7 +19,8 @@ canvas {
 <canvas id="canvas" width="962" height="641"></canvas>
 
 <script>
-    
+        //CEC.forceRaphael();
+
         var Ticker = CEC.Ticker,
             RectSprite = CEC.Sprite.Rect,
             AnimSprite = CEC.Sprite.Anim;
@@ -52,10 +53,7 @@ canvas {
             backgroundImage: './images/package/repeat.png',
             backgroundRepeat: 'repeat-x',
             backgroundSize: 'auto 100%'
-        }).appendTo(stage)
-        .on('render:before', function (dt) {
-            this.setBackgroundPositionX('-5');
-        });
+        }).appendTo(stage);
 
         var pkgCont = new RectSprite({
             x: 0,
@@ -84,10 +82,7 @@ canvas {
                     arrangeDir: 'h'
                 }
 
-            }).appendTo(pkgCont)
-            .on('render:before', function (dt) {
-                this.setX('-5');
-            });
+            }).appendTo(pkgCont);
         }
         
         function checkPkgs () {
@@ -105,6 +100,7 @@ canvas {
 
         addPkgs();
 
+        /*
         stage.delegate('click', function (e) {
             if (e.targetSprite.name == 'package') {
                 e.targetSprite.play();
@@ -114,17 +110,28 @@ canvas {
                 e.targetSprite.play();
             }
         });
+        */
+        
+        function update () {
+            repeat.setBackgroundPositionX('-5');
+            for (var i =0; i < pkgCont.children.length; i ++) {
+                pkgCont.children[i].setX('-5');
+            }
+        }
 
         Ticker.singleton.on('tick', function (dt) {
             stage.clear();
             checkPkgs();
+            
+            update();
             stage.render(dt);
         }); 
 
-
+/*
     document.addEventListener('touchmove', function (e) {
         e.preventDefault();
     }, false)
+    */
 
 </script>
 </body>

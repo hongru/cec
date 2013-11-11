@@ -1,4 +1,4 @@
-CEC.Sprite.Anim = function (RectSprite, Ticker) {
+CEC._.Sprite.Anim = function (RectSprite, Ticker) {
     
     var AnimSprite = RectSprite.extend({
         initialize: function (options) {
@@ -154,4 +154,9 @@ CEC.Sprite.Anim = function (RectSprite, Ticker) {
 
     return AnimSprite;
 
-}(CEC.Sprite, CEC.Ticker);
+}(CEC._.Sprite, CEC.Ticker);
+
+//mix
+if (CEC._.isUseRaphael()) {
+    CEC.Sprite.Anim = CEC._.Sprite.Anim;
+}

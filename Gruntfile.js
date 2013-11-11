@@ -97,6 +97,21 @@ module.exports = function (grunt) {
                     dest: './build/cec/cec-nokissy.js'
                 }
             ]
+        },
+
+        concat: {
+            ra: {
+                src: [
+                    './build/cec/cec-nokissy.js', 
+                    './src/cec/raphael/raphael.1.5.2.js',
+                    './src/cec/raphael/cec._.js', 
+                    './src/cec/raphael/cec.cobject.js',
+                    './src/cec/raphael/cec.sprite.js',
+                    './src/cec/raphael/cec.sprite.anim.js',
+                    './src/cec/raphael/cec.sprite.path.js'
+                ],
+                dest: './build/cec/cec.ra.js'
+            }
         }
 
         // watch: {
@@ -115,5 +130,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-kmc');
 
     // Default task.
-    grunt.registerTask('default', [ 'kmc', 'removeKissy']);
+    grunt.registerTask('default', [ 'kmc', 'removeKissy', 'concat:ra']);
 };

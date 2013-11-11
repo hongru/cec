@@ -1,4 +1,4 @@
-CEC.Cobject = function (Notifier) {
+CEC._.Cobject = function (Notifier) {
     var Cobject = Notifier.extend({
         points: null,
         x: 0,
@@ -105,4 +105,9 @@ CEC.Cobject = function (Notifier) {
     });
 
     return Cobject;
-}(CEC.Notifier)
+}(CEC.Notifier);
+
+//mix
+if (CEC._.isUseRaphael()) {
+    CEC.Cobject = CEC._.Cobject;
+}
