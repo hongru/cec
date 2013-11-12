@@ -1474,6 +1474,9 @@ mods['cec/sprite/pathsprite'] = (function (S, Sprite) {
 		setWidth: function (w, autoRender) {
 			return this.set({lineWidth: w}, autoRender);
 		},
+        setLineWidth: function (w, autoRender) {
+            return this.set({lineWidth: w}, autoRender);
+        },
 		setColor: function (c, autoRender) {
 			return this.set({lineColor: c}, autoRender);
 		},
@@ -1482,6 +1485,11 @@ mods['cec/sprite/pathsprite'] = (function (S, Sprite) {
                 this.points[i] = p;
             }
             this._updateBounding();
+            autoRender && this.render();
+            return this;
+        },
+        setPoints: function (pts, autoRender) {
+            this.points = pts;
             autoRender && this.render();
             return this;
         }

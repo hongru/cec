@@ -25,7 +25,7 @@ CEC._ = CEC._ || {};
         if (ra) {
             //div
             var node = document.createElement('div');
-            styles.position = 'relative';
+            styles.position = 'absolute';
         } else {
             //canvas
             var node = document.createElement('canvas');

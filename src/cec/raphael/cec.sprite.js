@@ -136,9 +136,18 @@ CEC._.Sprite = function (Cobject) {
             
             return path;
         },
-        delegate: function () {
+        _addEvent: function (el, ev, fn) {
+            if (el.addEventListener) {
+                el.addEventListener(ev, fn ,false);
+            } else {
+                el.attachEvent('on'+ev, function () { fn.call(el) });
+            }
+        },
+        delegate: function (ev, fn) {
             //todo
-            
+            this._addEvent(this.canvas, ev, function (e) {
+                //console.log(e.target)
+            });
             return this;
         },
 

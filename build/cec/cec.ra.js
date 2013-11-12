@@ -1474,6 +1474,9 @@ mods['cec/sprite/pathsprite'] = (function (S, Sprite) {
 		setWidth: function (w, autoRender) {
 			return this.set({lineWidth: w}, autoRender);
 		},
+        setLineWidth: function (w, autoRender) {
+            return this.set({lineWidth: w}, autoRender);
+        },
 		setColor: function (c, autoRender) {
 			return this.set({lineColor: c}, autoRender);
 		},
@@ -1482,6 +1485,11 @@ mods['cec/sprite/pathsprite'] = (function (S, Sprite) {
                 this.points[i] = p;
             }
             this._updateBounding();
+            autoRender && this.render();
+            return this;
+        },
+        setPoints: function (pts, autoRender) {
+            this.points = pts;
             autoRender && this.render();
             return this;
         }
@@ -1640,7 +1648,7 @@ CEC._ = CEC._ || {};
         if (ra) {
             //div
             var node = document.createElement('div');
-            styles.position = 'relative';
+            styles.position = 'absolute';
         } else {
             //canvas
             var node = document.createElement('canvas');
@@ -1922,9 +1930,18 @@ CEC._.Sprite = function (Cobject) {
             
             return path;
         },
-        delegate: function () {
+        _addEvent: function (el, ev, fn) {
+            if (el.addEventListener) {
+                el.addEventListener(ev, fn ,false);
+            } else {
+                el.attachEvent('on'+ev, function () { fn.call(el) });
+            }
+        },
+        delegate: function (ev, fn) {
             //todo
-            
+            this._addEvent(this.canvas, ev, function (e) {
+                //console.log(e.target)
+            });
             return this;
         },
 
