@@ -20,7 +20,31 @@ CEC._ = CEC._ || {};
         }
     }
 
-    CEC.isUseRaphael = _.isUseRaphael;
-    CEC.forceRaphael = _.forceRaphael;
+    _.createCanvas = function (styles) {
+        var ra = _.isUseRaphael();
+        if (ra) {
+            //div
+            var node = document.createElement('div');
+        } else {
+            //canvas
+            var node = document.createCanvas('canvas');
+        }
+
+        node.id = styles.id;
+        delete styles.id;
+
+        for (var k in styles) {
+            var v = styles[k];
+            if (/width|height|left|top/i.test(k) && /^\d+$/.test(v)) {
+                v += 'px'
+            }
+            node.style[k] = v;
+        }
+    }
+
+
+    for (var k in _) {
+        CEC[k] = _[k];
+    }
 
 })(CEC._);
