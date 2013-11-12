@@ -19,8 +19,8 @@ CEC._.Sprite = function (Cobject) {
             this.absScaleY = this.parent.absScaleY + this.scaleY;
         },
         _addImage: function (o) {
-            var absX = this.element ? this.element.attrs['x'] : 0,
-                absY = this.element ? this.element.attrs['y'] : 0;
+            var absX = this.element && this.element.attrs ? this.element.attrs['x'] : 0,
+                absY = this.element && this.element.attrs ? this.element.attrs['y'] : 0;
 
             if (this.element && this.element.nodeType) {
                 absX = parseInt(this._getStyle(this.element, 'left'));
@@ -76,6 +76,7 @@ CEC._.Sprite = function (Cobject) {
             return o.element;
         },
         _setStyle: function (el, rules) {
+            if (!el) return this;
             for (var k in rules) { 
                 el.style[k] = rules[k];
             }
@@ -143,12 +144,92 @@ CEC._.Sprite = function (Cobject) {
                 el.attachEvent('on'+ev, function () { fn.call(el) });
             }
         },
-        delegate: function (ev, fn) {
+        delegate: function (ev, callback) {
             //todo
+            //private 
+            var win = window,
+                self = this,
+                html = document.documentElement || {scrollLeft:0, scrollTop: 0};
+            function getWindowScroll() {
+                return {
+                    x: (win.pageXOffset || html.scrollLeft),
+                    y: (win.pageYOffset || html.scrollTop)
+                };
+            }
+            //private
+            function getOffset(el) {
+                el = el || self.canvas;
+                var width = el.offsetWidth || el.width,
+                    height = el.offsetHeight || el.height,
+                    top = el.offsetTop || 0,
+                    left = el.offsetLeft || 0;
+                while (el = el.offsetParent) {
+                    top = top + el.offsetTop;
+                    left = left + el.offsetLeft;
+                }
+                return {
+                    top: top,
+                    left: left,
+                    width: width,
+                    height: height
+                };
+            }
+
+
             this._addEvent(this.canvas, ev, function (e) {
-                //console.log(e.target)
+                e = e || window.event;
+                var stageOffsetX, stageOffsetY, targetOffsetX, targetOffsetY,
+                        of = getOffset(self.canvas),
+                        winScroll = getWindowScroll();
+
+                    if (/touch/.test(ev) && e.touches[0]) {
+                        var touch = e.touches[0];
+                        stageOffsetX = touch.pageX - of.left;
+                        stageOffsetY = touch.pageY - of.top;
+                    } else {
+                        stageOffsetX = e.clientX + winScroll.x - of.left;
+                        stageOffsetY = e.clientY + winScroll.y - of.top;
+                    }
+
+                    //console.log(stageOffsetX, stageOffsetY)
+                    var target = self._findTarget(stageOffsetX, stageOffsetY);
+                    e.targetSprite = target;
+                    //e._target = target;
+                    e.stageOffsetX = stageOffsetX;
+                    e.stageOffsetY = stageOffsetY;
+                    e.spriteOffsetX = target._ev_offsetX;
+                    e.spriteOffsetY = target._ev_offsetY;
+                    //console.log(stageOffsetX,stageOffsetY,e.spriteOffsetX,e.spriteOffsetY)
+
+                    delete target._ev_offsetX;
+                    delete target._ev_offsetY;
+
+                    callback && callback(e);
             });
             return this;
+        },
+        _findTarget: function (x, y) {
+            var hoverSprites = [];
+            hoverSprites.push(this);
+
+            function find (o, l, t) {
+                if (o.children && o.children.length) {
+                    for (var i = 0, len = o.children.length; i < len; i ++) {
+                        var c = o.children[i],
+                            posc = [l + c.x, t + c.y, l + c.x + c.width, t + c.y + c.height];
+                        if (c.visible && x > posc[0] && x < posc[2] && y > posc[1] && y < posc[3]) {
+                            c._ev_offsetX = x - (l + c.x);
+                            c._ev_offsetY = y - (t + c.y);
+                            hoverSprites.push(c);
+                        }
+                        find(c, posc[0], posc[1]);
+                    }
+                }
+            }
+            find(this, this.x, this.y);
+
+            //console.log(hoverSprites[hoverSprites.length-1]);
+            return hoverSprites[hoverSprites.length-1];
         },
 
         add: function (o) {
@@ -235,6 +316,7 @@ CEC._.Sprite = function (Cobject) {
             return true;
         },
         show: function () {
+            if (!this.element) return this;
             if (this.element.nodeType) {
                 this.element.style.display = 'block';
             } else {
@@ -244,6 +326,7 @@ CEC._.Sprite = function (Cobject) {
             return this;
         },
         hide: function () {
+            if (!this.element) return this;
             if (this.element.nodeType) {
                 this.element.style.display = 'none';
             } else {

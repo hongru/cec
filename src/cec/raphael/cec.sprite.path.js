@@ -31,7 +31,7 @@ CEC._.Sprite.Path = function (Sprite) {
             this.setPoints(this.points);
             return this;
         },
-        setPoints: function (pts) {
+        setPoints: function (pts) { 
             var absX = this.element ? this.element.attrs['x'] || 0 : 0,
                 absY = this.element ? this.element.attrs['y'] || 0 : 0;
                 

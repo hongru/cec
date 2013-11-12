@@ -33,6 +33,10 @@ CEC._ = CEC._ || {};
         }
 
         node.id = styles.id;
+        node.ondragstart = function (e) {
+            e && e.preventDefault && e.preventDefault()
+            return false;
+        };
         delete styles.id;
 
         for (var k in styles) {
