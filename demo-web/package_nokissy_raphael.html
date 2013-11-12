@@ -5,26 +5,25 @@
 
 <style>
 body {margin:0;}
-canvas {
-    display: block;
-    background: #333;
-    margin: 0 auto;
-}
 </style>
 
-<script type="text/javascript" src="../build/cec/cec-nokissy.js"></script>
-
-<script src="../src/cec/raphael/raphael.1.5.2.js"></script>
-<script src="../src/cec/raphael/cec.cobject.js"></script>
-<script src="../src/cec/raphael/cec.sprite.js"></script>
-<script src="../src/cec/raphael/cec.sprite.anim.js"></script>
+<script type="text/javascript" src="../build/cec/cec.ra.js"></script>
 </head>
 
 <body>
-<canvas id="canvas" width="962" height="641"></canvas>
 
 <script>
-
+        //CEC.forceRaphael();
+        
+        var canvas = CEC.createCanvas({
+            id: 'canvas',
+            width: 962,
+            height: 640,
+            marginLeft: 'auto',
+            marginRight: 'auto'
+        });
+        document.body.appendChild(canvas);
+        
         var Ticker = CEC.Ticker,
             RectSprite = CEC.Sprite.Rect,
             AnimSprite = CEC.Sprite.Anim;
@@ -124,9 +123,6 @@ canvas {
         }); 
 
 
-    document.addEventListener('touchmove', function (e) {
-        e.preventDefault();
-    }, false)
 
 </script>
 </body>

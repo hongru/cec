@@ -1640,9 +1640,11 @@ CEC._ = CEC._ || {};
         if (ra) {
             //div
             var node = document.createElement('div');
+            styles.position = 'relative';
         } else {
             //canvas
-            var node = document.createCanvas('canvas');
+            var node = document.createElement('canvas');
+            styles.display = 'block';
         }
 
         node.id = styles.id;
@@ -1654,7 +1656,13 @@ CEC._ = CEC._ || {};
                 v += 'px'
             }
             node.style[k] = v;
+
+            if (k == 'width' || k == 'height') {
+                node[k] = parseInt(v);
+            }
         }
+
+        return node;
     }
 
 
