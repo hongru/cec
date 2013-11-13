@@ -108,7 +108,8 @@ CEC._.Sprite = function (Cobject) {
 
             rect.attr({
                 'opacity': o.opacity,
-                'stroke': 'none'
+                'stroke': 'none',
+                'fill': o.fillColor
             });
 
             o.element = rect;
@@ -423,9 +424,10 @@ CEC._.Sprite = function (Cobject) {
             if (cx == undefined) cx = this.element.attrs['x'] + this.width/2;
             if (cy == undefined) cy = this.element.attrs['y'] + this.height/2;
 
-            this.element.rotate(this.angle, cx, cy);
+            this.element.rotate(this.angle, true);
+
             for (var i = 0; i < this.children.length; i ++) {
-                this.children[i].rotate(this.angle, cx, cy);
+                this.children[i].rotate(this.angle, true);
             }
 
             
