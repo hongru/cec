@@ -653,12 +653,13 @@ mods['cec/sprite/sprite'] = (function (S, Cobject) {
             var self = this;
             dt = dt || 0.016;
 
-            if (!self.visible) {return}
+            if (!self.visible || !self.points || !self.points.length) {return}
 
             self.ctx.save();
             self.type == 'stage' && self.ctx.translate(self.x, self.y)
             self.fire('render:before', dt);
             self._render(dt);
+            this.fire('render', dt);
             
             for (var i = 0, len = self.children.length; i < len ; i++) {
                 self.ctx.save();
@@ -704,7 +705,7 @@ mods['cec/sprite/sprite'] = (function (S, Cobject) {
                 this.ctx.stroke();
             }
 
-            this.fire('render', dt);
+            
         },
         clear: function (x, y, w, h) {
             if (x == undefined) x = 0;
@@ -1534,16 +1535,17 @@ mods['cec/sprite/segmentsprite'] = (function (S, PathSprite) {
     return SegmentSprite;
 
 })(KISSY,mods['cec/sprite/pathsprite']);
-mods['cec/sprite/index'] = (function (S, Poly, Rect, Anim, Path, Segment) {
+mods['cec/sprite/index'] = (function (S, Poly, Rect, Text, Anim, Path, Segment) {
     
     var Sprite = Poly;
     Sprite.Rect = Rect;
+    Sprite.Text = Text;
     Sprite.Anim = Anim;
     Sprite.Path = Path;
     Sprite.Segment = Segment;
 
     return Sprite;
-})(KISSY,mods['cec/sprite/sprite'],mods['cec/sprite/textsprite'],mods['cec/sprite/animsprite'],mods['cec/sprite/pathsprite'],mods['cec/sprite/segmentsprite']);
+})(KISSY,mods['cec/sprite/sprite'],mods['cec/sprite/rectsprite'],mods['cec/sprite/textsprite'],mods['cec/sprite/animsprite'],mods['cec/sprite/pathsprite'],mods['cec/sprite/segmentsprite']);
 mods['cec/ticker/index'] = (function (S, Notifier) {
     
     var requestAnimFrame =  (function() {
@@ -1655,7 +1657,7 @@ CEC._ = CEC._ || {};
             styles.display = 'block';
         }
 
-        node.id = styles.id;
+        if (styles.id) node.id = styles.id;
         node.ondragstart = function (e) {
             e && e.preventDefault && e.preventDefault()
             return false;
@@ -1698,8 +1700,8 @@ CEC._.Cobject = function (Notifier) {
         zIndex: 0,
         visible: true,
         backgroundImage: null,
-        backgroundRepeat: 'repeat', // repeat|repeat-x|repeat-y|no-repeat
-        backgroundPosition: '0 0', // '0 0'
+        backgroundRepeat: null, // repeat|repeat-x|repeat-y|no-repeat
+        backgroundPosition: null, // '0 0'
         backgroundPositionX: 0,
         backgroundPositionY: 0,
         backgroundSize: null, // 'auto auto'
@@ -1717,7 +1719,7 @@ CEC._.Cobject = function (Notifier) {
 
             if (options.nodeName == 'CANVAS') {
                 var newNode = document.createElement('div');
-                newNode.id = options.id;
+                if (options.id) newNode.id = options.id;
                 newNode.style.width = (options.width || options.offsetWidth) + 'px';
                 newNode.style.height = (options.height || options.offsetHeight) + 'px';
                 options.parentNode.replaceChild(newNode, options);
@@ -1825,7 +1827,7 @@ CEC._.Sprite = function (Cobject) {
                 absY = parseInt(this._getStyle(this.element, 'top'));
             }
 
-            if ((!o.backgroundRepeat || o.backgroundRepeat == 'no-repeat') && !o.animConfig) {
+            if ((!o.backgroundRepeat || o.backgroundRepeat == 'no-repeat') && !o.backgroundPosition && !o.animConfig) {
                 var iw = o.width, ih = o.height;
 
                 var image = o.paper.image(o.backgroundImage, absX+o.x, absY+o.y, iw, ih);
@@ -1876,6 +1878,7 @@ CEC._.Sprite = function (Cobject) {
         _setStyle: function (el, rules) {
             if (!el) return this;
             for (var k in rules) { 
+                if (rules[k] == null || rules[k] == undefined) continue;
                 el.style[k] = rules[k];
             }
         },
@@ -2527,10 +2530,13 @@ CEC._.Sprite.Path = function (Sprite) {
                 absY = this.element ? this.element.attrs['y'] || 0 : 0;
                 
             var p = ['M'+(absX+pts[0][0])+' '+(absY+pts[0][1])];
+            
             for (var i = 1; i < pts.length; i ++) {
                 p.push('L'+(absX+pts[i][0]) + ' ' + (absY+pts[i][1]));
+                if (i==pts.length- 1) {
+                    p.push('Z');
+                };
             }
-            p.push('Z');
             
             this.element.attr({
                 'path': p.join('')

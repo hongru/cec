@@ -36,10 +36,13 @@ CEC._.Sprite.Path = function (Sprite) {
                 absY = this.element ? this.element.attrs['y'] || 0 : 0;
                 
             var p = ['M'+(absX+pts[0][0])+' '+(absY+pts[0][1])];
+            
             for (var i = 1; i < pts.length; i ++) {
                 p.push('L'+(absX+pts[i][0]) + ' ' + (absY+pts[i][1]));
+                if (i==pts.length- 1) {
+                    p.push('Z');
+                };
             }
-            p.push('Z');
             
             this.element.attr({
                 'path': p.join('')

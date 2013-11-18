@@ -32,7 +32,7 @@ CEC._ = CEC._ || {};
             styles.display = 'block';
         }
 
-        node.id = styles.id;
+        if (styles.id) node.id = styles.id;
         node.ondragstart = function (e) {
             e && e.preventDefault && e.preventDefault()
             return false;

@@ -679,12 +679,13 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
             var self = this;
             dt = dt || 0.016;
 
-            if (!self.visible) {return}
+            if (!self.visible || !self.points || !self.points.length) {return}
 
             self.ctx.save();
             self.type == 'stage' && self.ctx.translate(self.x, self.y)
             self.fire('render:before', dt);
             self._render(dt);
+            this.fire('render', dt);
             
             for (var i = 0, len = self.children.length; i < len ; i++) {
                 self.ctx.save();
@@ -730,7 +731,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                 this.ctx.stroke();
             }
 
-            this.fire('render', dt);
+            
         },
         clear: function (x, y, w, h) {
             if (x == undefined) x = 0;
@@ -1576,17 +1577,18 @@ KISSY.add('cec/sprite/segmentsprite',function (S, PathSprite) {
     requires: ['cec/sprite/pathsprite']
 })
 //Sprite index
-KISSY.add('cec/sprite/index',function (S, Poly, Rect, Anim, Path, Segment) {
+KISSY.add('cec/sprite/index',function (S, Poly, Rect, Text, Anim, Path, Segment) {
     
     var Sprite = Poly;
     Sprite.Rect = Rect;
+    Sprite.Text = Text;
     Sprite.Anim = Anim;
     Sprite.Path = Path;
     Sprite.Segment = Segment;
 
     return Sprite;
 }, {
-    requires: ['cec/sprite/sprite', 'cec/sprite/textsprite', 'cec/sprite/animsprite', 'cec/sprite/pathsprite', 'cec/sprite/segmentsprite']
+    requires: ['cec/sprite/sprite', 'cec/sprite/rectsprite', 'cec/sprite/textsprite', 'cec/sprite/animsprite', 'cec/sprite/pathsprite', 'cec/sprite/segmentsprite']
 })
 KISSY.add('cec/ticker/index',function (S, Notifier) {
     

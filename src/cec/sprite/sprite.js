@@ -332,12 +332,13 @@ KISSY.add(function (S, Cobject) {
             var self = this;
             dt = dt || 0.016;
 
-            if (!self.visible) {return}
+            if (!self.visible || !self.points || !self.points.length) {return}
 
             self.ctx.save();
             self.type == 'stage' && self.ctx.translate(self.x, self.y)
             self.fire('render:before', dt);
             self._render(dt);
+            this.fire('render', dt);
             
             for (var i = 0, len = self.children.length; i < len ; i++) {
                 self.ctx.save();
@@ -383,7 +384,7 @@ KISSY.add(function (S, Cobject) {
                 this.ctx.stroke();
             }
 
-            this.fire('render', dt);
+            
         },
         clear: function (x, y, w, h) {
             if (x == undefined) x = 0;

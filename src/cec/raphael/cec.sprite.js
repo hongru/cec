@@ -27,7 +27,7 @@ CEC._.Sprite = function (Cobject) {
                 absY = parseInt(this._getStyle(this.element, 'top'));
             }
 
-            if ((!o.backgroundRepeat || o.backgroundRepeat == 'no-repeat') && !o.animConfig) {
+            if ((!o.backgroundRepeat || o.backgroundRepeat == 'no-repeat') && !o.backgroundPosition && !o.animConfig) {
                 var iw = o.width, ih = o.height;
 
                 var image = o.paper.image(o.backgroundImage, absX+o.x, absY+o.y, iw, ih);
@@ -78,6 +78,7 @@ CEC._.Sprite = function (Cobject) {
         _setStyle: function (el, rules) {
             if (!el) return this;
             for (var k in rules) { 
+                if (rules[k] == null || rules[k] == undefined) continue;
                 el.style[k] = rules[k];
             }
         },

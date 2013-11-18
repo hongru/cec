@@ -13,8 +13,8 @@ CEC._.Cobject = function (Notifier) {
         zIndex: 0,
         visible: true,
         backgroundImage: null,
-        backgroundRepeat: 'repeat', // repeat|repeat-x|repeat-y|no-repeat
-        backgroundPosition: '0 0', // '0 0'
+        backgroundRepeat: null, // repeat|repeat-x|repeat-y|no-repeat
+        backgroundPosition: null, // '0 0'
         backgroundPositionX: 0,
         backgroundPositionY: 0,
         backgroundSize: null, // 'auto auto'
@@ -32,7 +32,7 @@ CEC._.Cobject = function (Notifier) {
 
             if (options.nodeName == 'CANVAS') {
                 var newNode = document.createElement('div');
-                newNode.id = options.id;
+                if (options.id) newNode.id = options.id;
                 newNode.style.width = (options.width || options.offsetWidth) + 'px';
                 newNode.style.height = (options.height || options.offsetHeight) + 'px';
                 options.parentNode.replaceChild(newNode, options);
