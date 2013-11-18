@@ -317,24 +317,75 @@ CEC._.Sprite = function (Cobject) {
             }
             return true;
         },
+        _isParentsVisible: function () {
+            var self = this.parent;
+            while (self) {
+                if (!self.visible) {
+                    return false;
+                }
+                self = self.parent;
+            }
+            return true;
+        },
         show: function () {
             if (!this.element) return this;
-            if (this.element.nodeType) {
-                this.element.style.display = 'block';
-            } else {
-                this.element.show();
-            }
+            showElement(this);
             this.visible = true;
+            delete this._visible;
+
+            restore_showChildren(this);
+
+            function showElement (o) {
+                if (o._isParentsVisible()) {
+                    if (o.element.nodeType) {
+                        o.element.style.display = 'block';
+                    } else {
+                        o.element.show();
+                    }
+                }
+                
+            }
+
+            function restore_showChildren(o) {
+                for (var i = 0, len = o.children.length; i < len; i ++) {
+                    var c = o.children[i];
+                    if (typeof c._visible == 'boolean') {
+                        c.visible = c._visible;
+                        delete c._visible;
+                    }
+                    c.visible && showElement(c);
+                    c.children && restore_showChildren(c);
+                }
+            }
+
             return this;
         },
         hide: function () {
             if (!this.element) return this;
-            if (this.element.nodeType) {
-                this.element.style.display = 'none';
-            } else {
-                this.element.hide();
-            }
+            hideElement(this);
             this.visible = false;
+
+            hack_hideChildren(this);
+
+            function hideElement (o) {
+                if (o.element.nodeType) { 
+                    o.element.style.display = 'none';
+                } else {
+                    o.element.hide();
+                } 
+                o.visible = false;
+            }
+
+            function hack_hideChildren (o) {
+                for (var i = 0, len = o.children.length; i < len; i ++) {
+                    var c = o.children[i];
+                    c._visible = c.visible;
+                    hideElement(c);
+
+                    c.children && hack_hideChildren(c);
+                }
+            }
+
             return this;
         },
         _set: function (param) {
