@@ -9,6 +9,8 @@ CEC._.Sprite = function (Cobject) {
 
             this.parent = null;
             this.children = [];
+
+            this._ev_map = {};
             
         },
         _getAbsValues: function () {
@@ -146,68 +148,84 @@ CEC._.Sprite = function (Cobject) {
                 el.attachEvent('on'+ev, function () { fn.call(el) });
             }
         },
-        delegate: function (ev, callback) {
-            //todo
-            //private 
+        _getWindowScroll: function () {
             var win = window,
                 self = this,
                 html = document.documentElement || {scrollLeft:0, scrollTop: 0};
-            function getWindowScroll() {
-                return {
-                    x: (win.pageXOffset || html.scrollLeft),
-                    y: (win.pageYOffset || html.scrollTop)
-                };
+            return {
+                x: (win.pageXOffset || html.scrollLeft),
+                y: (win.pageYOffset || html.scrollTop)
+            };
+        },
+        _getOffset: function (el) {
+            var self = this;
+
+            el = el || self.canvas;
+            var width = el.offsetWidth || el.width,
+                height = el.offsetHeight || el.height,
+                top = el.offsetTop || 0,
+                left = el.offsetLeft || 0;
+            while (el = el.offsetParent) {
+                top = top + el.offsetTop;
+                left = left + el.offsetLeft;
             }
-            //private
-            function getOffset(el) {
-                el = el || self.canvas;
-                var width = el.offsetWidth || el.width,
-                    height = el.offsetHeight || el.height,
-                    top = el.offsetTop || 0,
-                    left = el.offsetLeft || 0;
-                while (el = el.offsetParent) {
-                    top = top + el.offsetTop;
-                    left = left + el.offsetLeft;
-                }
-                return {
-                    top: top,
-                    left: left,
-                    width: width,
-                    height: height
-                };
+            return {
+                top: top,
+                left: left,
+                width: width,
+                height: height
+            };
+        },
+        trigger: function (e, context) {
+            var ev = e.type,
+                self = this;
+
+            var stageOffsetX, stageOffsetY, targetOffsetX, targetOffsetY,
+                of = self._getOffset(self.canvas),
+                winScroll = self._getWindowScroll();
+
+            if (/touch/.test(ev) && e.touches[0]) {
+                var touch = e.touches[0];
+                stageOffsetX = touch.pageX - of.left;
+                stageOffsetY = touch.pageY - of.top;
+            } else {
+                stageOffsetX = e.clientX + winScroll.x - of.left;
+                stageOffsetY = e.clientY + winScroll.y - of.top;
             }
 
+            //console.log(stageOffsetX, stageOffsetY)
+            var target = self._findTarget(stageOffsetX, stageOffsetY);
+            e.targetSprite = target;
+            //e._target = target;
+            e.stageOffsetX = stageOffsetX;
+            e.stageOffsetY = stageOffsetY;
+            e.spriteOffsetX = target._ev_offsetX;
+            e.spriteOffsetY = target._ev_offsetY;
+            //console.log(stageOffsetX,stageOffsetY,e.spriteOffsetX,e.spriteOffsetY)
 
-            this._addEvent(this.canvas, ev, function (e) {
-                e = e || window.event;
-                var stageOffsetX, stageOffsetY, targetOffsetX, targetOffsetY,
-                        of = getOffset(self.canvas),
-                        winScroll = getWindowScroll();
+            delete target._ev_offsetX;
+            delete target._ev_offsetY;
 
-                    if (/touch/.test(ev) && e.touches[0]) {
-                        var touch = e.touches[0];
-                        stageOffsetX = touch.pageX - of.left;
-                        stageOffsetY = touch.pageY - of.top;
-                    } else {
-                        stageOffsetX = e.clientX + winScroll.x - of.left;
-                        stageOffsetY = e.clientY + winScroll.y - of.top;
-                    }
+            var callbackList = this._ev_map[ev] || [];
+            for (var i = 0, len = callbackList.length; i < len; i ++) {
+                callbackList[i].call(context, e);
+            }
 
-                    //console.log(stageOffsetX, stageOffsetY)
-                    var target = self._findTarget(stageOffsetX, stageOffsetY);
-                    e.targetSprite = target;
-                    //e._target = target;
-                    e.stageOffsetX = stageOffsetX;
-                    e.stageOffsetY = stageOffsetY;
-                    e.spriteOffsetX = target._ev_offsetX;
-                    e.spriteOffsetY = target._ev_offsetY;
-                    //console.log(stageOffsetX,stageOffsetY,e.spriteOffsetX,e.spriteOffsetY)
+        },
+        delegate: function (ev, callback) {
+            if (!this._ev_map[ev]) {
+                this._ev_map[ev] = [];
+                this._ev_map[ev].push(callback);
 
-                    delete target._ev_offsetX;
-                    delete target._ev_offsetY;
-
-                    callback && callback(e);
-            });
+                var self = this;
+                this._addEvent(this.canvas, ev, function (e) {
+                    e = e || window.event;
+                    self.trigger(e);
+                });
+            } else {
+                this._ev_map[ev].push(callback);
+            }
+            
             return this;
         },
         _findTarget: function (x, y) {

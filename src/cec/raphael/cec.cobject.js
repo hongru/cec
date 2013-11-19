@@ -65,6 +65,7 @@ CEC._.Cobject = function (Notifier) {
                 this.eventsReceptor = eventsReceptor;
                 this.canvas.eventsReceptor = eventsReceptor;
 
+                this.type = 'stage';
 
             } else {
                 for (var k in options) {
