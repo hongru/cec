@@ -8,7 +8,7 @@ KISSY.add(function (S, Cobject) {
             images: {},
             audio: {}
         },
-        _htmlevents: 'click,dblclick,mousedown,mousemove,mouseover,mouseout,mouseup,keydown,keypress,keyup,touchstart,touchend,touchcancel,touchleave,touchmove',
+        _htmlevents: 'click,dblclick,mousedown,mousemove,mouseover,mouseout,mouseenter,mouseleave,mouseup,keydown,keypress,keyup,touchstart,touchend,touchcancel,touchleave,touchmove',
         initialize: function (options) {
             this.supr(options);
 
@@ -415,19 +415,37 @@ KISSY.add(function (S, Cobject) {
             return this;
         },
         on: function (ev, callback) {
+            var self = this;
             if ((','+this._htmlevents+',').indexOf(','+ev+',') > -1) {
                 // bubble events binding
-                // todo
+                if (ev == 'mouseover'
+                    || ev == 'mouseout'
+                    || ev == 'mouseenter'
+                    || ev == 'mouseleave') {
+                    this.stage.delegate('mousemove', function (e) {
+                        var lastKey = '_last_isSelf_'+ev,
+                            key = '_isSelf_' + ev;
+                        self[lastKey] = !!self[key];
+                        self[key] = e.targetSprite == self;
+                        if ((self[key] && !self[lastKey] && (ev == 'mouseover' || ev == 'mouseenter'))
+                            || (self[lastKey] && !self[key] && (ev == 'mouseout' || ev == 'mouseleave'))
+                        ) {
+                            callback && callback.call(self, e);
+                        } 
+
+                    });
+                } else {
+                    this.stage.delegate(ev, function (e) {
+                        e.targetSprite == self && callback && callback.call(self, e);
+                    });
+                }
             } else {
                 this.supr(ev, callback);
             }
             return this;
         },
         delegate: function (ev, callback) {
-            // capture target events binding
-            if ((','+this._htmlevents+',').indexOf(','+ev+',') > -1) {
-                this._delegateHtmlEvents(ev, callback);
-            }
+            this._delegateHtmlEvents(ev, callback);
             return this;
         },
         _set: function (param) {
