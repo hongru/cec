@@ -2360,11 +2360,11 @@ CEC._.Sprite = function (Cobject) {
         setScale: function (sx, sy, cx, cy) {
             this._set({scaleX: sx, scaleY: sy});
             if (!this.element.nodeType) {
-                if (cx == undefined) cx = this.element.attrs['x'] + this.width/2;
-                if (cy == undefined) cy = this.element.attrs['y'] + this.height/2;
-                this.element.scale(this.scaleX, this.scaleY, cx, cy);
+                //if (cx == undefined) cx = this.absX + this.width/2;
+                //if (cy == undefined) cy = this.absY + this.height/2;
+                this.element.scale(this.scaleX, this.scaleY);
                 for (var i = 0; i < this.children.length; i ++) {
-                    this.children[i].setScale(this.scaleX, this.scaleY, cx, cy);
+                    this.children[i].setScale(this.scaleX, this.scaleY);
                 }
             }
             return this;
