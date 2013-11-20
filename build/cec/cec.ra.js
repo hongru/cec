@@ -1842,6 +1842,7 @@ CEC._.Sprite = function (Cobject) {
             images: {},
             audio: {}
         },
+        _htmlevents: 'click,dblclick,mousedown,mousemove,mouseover,mouseout,mouseenter,mouseleave,mouseup,keydown,keypress,keyup,touchstart,touchend,touchcancel,touchleave,touchmove',
         initialize: function (options) {
             this.supr(options);
 
@@ -2050,6 +2051,36 @@ CEC._.Sprite = function (Cobject) {
             }
 
         },
+        on: function (ev, callback) {
+            var self = this;
+            if ((','+this._htmlevents+',').indexOf(','+ev+',') > -1) {
+                // bubble events binding
+                if (ev == 'mouseover'
+                    || ev == 'mouseout'
+                    || ev == 'mouseenter'
+                    || ev == 'mouseleave') {
+                    this.stage.delegate('mousemove', function (e) {
+                        var lastKey = '_last_isSelf_'+ev,
+                            key = '_isSelf_' + ev;
+                        self[lastKey] = !!self[key];
+                        self[key] = e.targetSprite == self;
+                        if ((self[key] && !self[lastKey] && (ev == 'mouseover' || ev == 'mouseenter'))
+                            || (self[lastKey] && !self[key] && (ev == 'mouseout' || ev == 'mouseleave'))
+                        ) {
+                            callback && callback.call(self, e);
+                        } 
+
+                    });
+                } else {
+                    this.stage.delegate(ev, function (e) {
+                        e.targetSprite == self && callback && callback.call(self, e);
+                    });
+                }
+            } else {
+                this.supr(ev, callback);
+            }
+            return this;
+        },
         delegate: function (ev, callback) {
             if (!this._ev_map[ev]) {
                 this._ev_map[ev] = [];
@@ -2093,6 +2124,7 @@ CEC._.Sprite = function (Cobject) {
         add: function (o) {
 
             o.parent = this;
+            o.stage = this.stage || this;
             
             var canvas = document.createElement('div');
             this.canvas.appendChild(canvas);
