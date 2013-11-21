@@ -7,6 +7,13 @@ CEC
     - A Individuation, High-performance and Straightforward solution of Cross-End[Web & Native]
 
 
+## Feature
+
+- 跨终端canvas渲染，从pc到mobile，从ie6 到 chrome，从web到native ，一体化的解决方案
+- 绝对易用的api，方便的语法糖
+- 无限嵌套组的概念
+- 分层渲染，提升app渲染性能
+
 ## 构建方式
 
 >
