@@ -1,7 +1,7 @@
 //RectSprite
 KISSY.add(function (S, Sprite) {
 
-    var supportBackgroundSize = false;
+    var supportBackgroundSize = true;
 	
 	var RectSprite = Sprite.extend({
 

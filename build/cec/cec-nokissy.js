@@ -855,7 +855,7 @@ mods['cec/sprite/sprite'] = (function (S, Cobject) {
 })(KISSY,mods['cec/sprite/cobject']);
 mods['cec/sprite/rectsprite'] = (function (S, Sprite) {
 
-    var supportBackgroundSize = false;
+    var supportBackgroundSize = true;
 	
 	var RectSprite = Sprite.extend({
 

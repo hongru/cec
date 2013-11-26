@@ -789,7 +789,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
 //RectSprite
 KISSY.add('cec/sprite/rectsprite',function (S, Sprite) {
 
-    var supportBackgroundSize = false;
+    var supportBackgroundSize = true;
 	
 	var RectSprite = Sprite.extend({
 
