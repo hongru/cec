@@ -91,7 +91,21 @@ CEC.Ticker.singleton.on('tick', function (dt) {
 ```
 
 ## Test cases
-- 
+- [background-repeat](http://hongru.github.io/cec/demo-web/background_repeat.html)
+- [balls](http://hongru.github.io/cec/demo-web/balls.html)
+- [bind Evens](http://hongru.github.io/cec/demo-web/bindEvents.html)
+- [drawImage(canvas) performance](http://hongru.github.io/cec/demo-web/canvas.html) 【开console可以看到，drawImage(canvas)性能比drawImage(img)要差很多】
+- [font](http://hongru.github.io/cec/demo-web/font-face.html)
+- [Frames Animation](http://hongru.github.io/cec/demo-web/frameAnim_sprite.html)
+- [loader](http://hongru.github.io/cec/demo-web/loader.html) 【开console查看，注意retry和 超时的逻辑】
+- [package demo](http://hongru.github.io/cec/demo-web/package_nokissy.html)
+- [path sprite](http://hongru.github.io/cec/demo-web/path_sprite.html)
+- [segment demo](http://hongru.github.io/cec/demo-web/segment_sprite.html)
+- [sprites group](http://hongru.github.io/cec/demo-web/sprite_group.html)
+- [img, scale, rotate](http://hongru.github.io/cec/demo-web/sprite_img.html)
+- [normal](http://hongru.github.io/cec/demo-web/sprite_normal.html)
+- [text sprite](http://hongru.github.io/cec/demo-web/sprite_text.html)
+- [tween](http://hongru.github.io/cec/demo-web/tween.html)
 
 ## Demos
 - [Post-Ninja](http://cenan.demo.taobao.net/demos/post-ninja/index.html?1126) 【厂内】
