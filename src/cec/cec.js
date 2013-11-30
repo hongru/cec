@@ -8,6 +8,9 @@ KISSY.add(function (S, Loader, Sprite, Ticker, Notifier, TWEEN) {
     CEC.Notifier = Notifier;
     CEC.TWEEN = TWEEN;
 
+    //loader belongto
+    CEC.Loader.belongto(CEC.Sprite);
+
     return CEC;
 
 }, {
