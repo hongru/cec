@@ -558,11 +558,15 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
             var hoverSprites = [];
             hoverSprites.push(this);
 
+            var computedStyle = window.getComputedStyle(this.canvas, null);
+            var _sx = (parseInt(computedStyle.width))/this.canvas.width || 1;
+            var _sy = (parseInt(computedStyle.height))/this.canvas.height || 1;
+
             function find (o, l, t) {
                 if (o.children && o.children.length) {
                     for (var i = 0, len = o.children.length; i < len; i ++) {
                         var c = o.children[i],
-                            posc = [l + c.x, t + c.y, l + c.x + c.width, t + c.y + c.height];
+                            posc = [(l + c.x)*_sx, (t + c.y)*_sy, (l + c.x + c.width)*_sx, (t + c.y + c.height)*_sy];
                         if (c.visible && x > posc[0] && x < posc[2] && y > posc[1] && y < posc[3]) {
                             c._ev_offsetX = x - (l + c.x);
                             c._ev_offsetY = y - (t + c.y);
@@ -590,6 +594,7 @@ KISSY.add('cec/sprite/sprite',function (S, Cobject) {
                 return a._zindex - b._zindex;
             });
 
+            o.fire('added:after', o);
             return this;
         },
         setZIndex: function (z) {
