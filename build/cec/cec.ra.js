@@ -538,6 +538,8 @@ mods['cec/sprite/sprite'] = (function (S, Cobject) {
             function find (o, l, t) {
                 if (o.children && o.children.length) {
                     for (var i = 0, len = o.children.length; i < len; i ++) {
+                        if (o.children[i].eventPenetrate) continue;
+
                         var c = o.children[i],
                             posc = [(l + c.x)*_sx, (t + c.y)*_sy, (l + c.x + c.width)*_sx, (t + c.y + c.height)*_sy];
                         if (c.visible && x > posc[0] && x < posc[2] && y > posc[1] && y < posc[3]) {
