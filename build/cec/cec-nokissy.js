@@ -1591,6 +1591,23 @@ mods['cec/sprite/index'] = (function (S, Poly, Rect, Text, Anim, Path, Segment) 
 
     return Sprite;
 })(KISSY,mods['cec/sprite/sprite'],mods['cec/sprite/rectsprite'],mods['cec/sprite/textsprite'],mods['cec/sprite/animsprite'],mods['cec/sprite/pathsprite'],mods['cec/sprite/segmentsprite']);
+mods['cec/sprite/stage'] = (function (S, RectSprite) {
+	
+	var Stage = RectSprite.extend({
+		initialize: function (canvas) {
+			if (typeof canvas === 'string') {
+				canvas = document.getElementById(canvas) || document.querySelector(canvas);
+			}
+			if (typeof canvas.getContext === 'function') {
+				this.type = 'stage';
+				this.supr(canvas);
+			}
+		}
+	});
+
+	return Stage;
+
+})(KISSY,mods['cec/sprite/rectsprite']);
 mods['cec/ticker/index'] = (function (S, Notifier) {
     
     var requestAnimFrame =  (function() {
@@ -2391,10 +2408,11 @@ TWEEN.Interpolation = {
     return TWEEN;
 
 })(KISSY);
-mods['cec/cec'] = (function (S, Loader, Sprite, Ticker, Notifier, TWEEN) {
+mods['cec/cec'] = (function (S, Loader, Sprite, Stage, Ticker, Notifier, TWEEN) {
     
     var CEC = {};
     CEC.Loader = Loader;
+    CEC.Stage = Stage;
     CEC.Sprite = Sprite;
     CEC.Ticker = Ticker;
     CEC.Notifier = Notifier;
@@ -2405,7 +2423,7 @@ mods['cec/cec'] = (function (S, Loader, Sprite, Ticker, Notifier, TWEEN) {
 
     return CEC;
 
-})(KISSY,mods['cec/loader/index'],mods['cec/sprite/index'],mods['cec/ticker/index'],mods['cec/notifier/index'],mods['cec/tween/tween']);
+})(KISSY,mods['cec/loader/index'],mods['cec/sprite/index'],mods['cec/sprite/stage'],mods['cec/ticker/index'],mods['cec/notifier/index'],mods['cec/tween/tween']);
 CEC = mods['cec/cec']; 
 
 })();

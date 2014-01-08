@@ -13,6 +13,7 @@ cec/sprite/animsprite
 cec/sprite/pathsprite
 cec/sprite/segmentsprite
 cec/sprite/index
+cec/sprite/stage
 cec/ticker/index
 cec/tween/tween
 cec/cec
@@ -1636,6 +1637,26 @@ KISSY.add('cec/sprite/index',function (S, Poly, Rect, Text, Anim, Path, Segment)
 }, {
     requires: ['cec/sprite/sprite', 'cec/sprite/rectsprite', 'cec/sprite/textsprite', 'cec/sprite/animsprite', 'cec/sprite/pathsprite', 'cec/sprite/segmentsprite']
 })
+//stage
+KISSY.add('cec/sprite/stage',function (S, RectSprite) {
+	
+	var Stage = RectSprite.extend({
+		initialize: function (canvas) {
+			if (typeof canvas === 'string') {
+				canvas = document.getElementById(canvas) || document.querySelector(canvas);
+			}
+			if (typeof canvas.getContext === 'function') {
+				this.type = 'stage';
+				this.supr(canvas);
+			}
+		}
+	});
+
+	return Stage;
+
+}, {
+	requires: ['cec/sprite/rectsprite']
+})
 KISSY.add('cec/ticker/index',function (S, Notifier) {
     
     var requestAnimFrame =  (function() {
@@ -2441,10 +2462,11 @@ TWEEN.Interpolation = {
 
 
 //CEC index
-KISSY.add('cec/cec',function (S, Loader, Sprite, Ticker, Notifier, TWEEN) {
+KISSY.add('cec/cec',function (S, Loader, Sprite, Stage, Ticker, Notifier, TWEEN) {
     
     var CEC = {};
     CEC.Loader = Loader;
+    CEC.Stage = Stage;
     CEC.Sprite = Sprite;
     CEC.Ticker = Ticker;
     CEC.Notifier = Notifier;
@@ -2456,5 +2478,5 @@ KISSY.add('cec/cec',function (S, Loader, Sprite, Ticker, Notifier, TWEEN) {
     return CEC;
 
 }, {
-    requires: ['cec/loader/index', 'cec/sprite/index', 'cec/ticker/index', 'cec/notifier/index', 'cec/tween/tween'] 
+    requires: ['cec/loader/index', 'cec/sprite/index', 'cec/sprite/stage', 'cec/ticker/index', 'cec/notifier/index', 'cec/tween/tween'] 
 });

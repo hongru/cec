@@ -12,7 +12,7 @@ canvas {
 }
 </style>
 
-<script type="text/javascript" src="../build/cec/cec.ra.js"></script>
+<script type="text/javascript" src="../build/cec/cec-nokissy.js"></script>
 </head>
 
 <body>
@@ -24,7 +24,7 @@ canvas {
             RectSprite = CEC.Sprite.Rect,
             AnimSprite = CEC.Sprite.Anim;
 
-        var stage = new RectSprite('canvas');
+        var stage = new CEC.Stage('canvas');
 
         var bg1 = new RectSprite({
             x: 0,
