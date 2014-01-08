@@ -26,7 +26,7 @@ build 出来的版本同时有基于kissy的版本和完全不依赖kissy的版�
 ## Usage
 
 ```javascript
-var stage = new CEC.Sprite('canvas');
+var stage = new CEC.Stage('canvas');
 
 var layer = new CEC.Sprite.Rect({
     x: 0,
@@ -69,7 +69,7 @@ CEC.Ticker.singleton.on('tick', function (dt) {
 如果需要使用TWEEN的动画。可以类似这样
 
 ```javascript
-var stage = new CEC.Sprite('canvas');
+var stage = new CEC.Stage('canvas');
 var rect = new CEC.Sprite.Rect({
     x: 0,
     y: 0,
